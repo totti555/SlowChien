@@ -1,4 +1,4 @@
-package com.example.slowchien.ui.dashboard;
+package com.example.slowchien.ui.exchange;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.slowchien.databinding.FragmentDashboardBinding;
+import com.example.slowchien.databinding.FragmentExchangeBinding;
 
-public class DashboardFragment extends Fragment {
+public class ExchangeFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentExchangeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        ExchangeViewModel exchangeViewModel =
+                new ViewModelProvider(this).get(ExchangeViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentExchangeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        //  Match to the id of the exchange layout
+        final TextView textView = binding.textExchange;
+        exchangeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

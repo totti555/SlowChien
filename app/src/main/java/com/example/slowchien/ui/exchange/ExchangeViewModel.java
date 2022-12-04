@@ -1,16 +1,15 @@
-package com.example.slowchien.ui.dashboard;
+package com.example.slowchien.ui.exchange;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class DashboardViewModel extends ViewModel {
-
+public class ExchangeViewModel extends ViewModel {
     private final MutableLiveData<String> mText;
 
-    public DashboardViewModel() {
+    public ExchangeViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+        mText.setValue("This is exchange fragment");
     }
 
     public LiveData<String> getText() {

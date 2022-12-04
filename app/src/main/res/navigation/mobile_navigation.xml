@@ -12,22 +12,22 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.slowchien.ui.dashboard.DashboardFragment"
+        android:id="@+id/navigation_exchange"
+        android:name="com.example.slowchien.ui.exchange.ExchangeFragment"
         android:label="@string/title_exchange"
-        tools:layout="@layout/fragment_dashboard" />
-
-    <fragment
-        android:id="@+id/navigation_contact"
-        android:name="com.example.slowchien.ui.settings.SettingsFragment"
-        android:label="@string/title_contacts"
-        tools:layout="@layout/fragment_contacts" />
+        tools:layout="@layout/fragment_exchange" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.slowchien.ui.contact.ContactFragment"
+        android:name="com.example.slowchien.ui.notifications.NotificationsFragment"
         android:label="@string/title_location"
         tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/navigation_contact"
+        android:name="com.example.slowchien.ui.contact.ContactFragment"
+        android:label="@string/title_contacts"
+        tools:layout="@layout/fragment_contacts" />
 
     <fragment
         android:id="@+id/navigation_settings"
