@@ -18,20 +18,20 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.slowchien.ui.notifications.NotificationsFragment"
-        android:label="@string/title_location"
-        tools:layout="@layout/fragment_notifications" />
-
-    <fragment
-        android:id="@+id/navigation_contacts"
-        android:name="com.example.slowchien.ui.home.HomeFragment"
+        android:id="@+id/navigation_contact"
+        android:name="com.example.slowchien.ui.settings.SettingsFragment"
         android:label="@string/title_contacts"
         tools:layout="@layout/fragment_contacts" />
 
     <fragment
+        android:id="@+id/navigation_notifications"
+        android:name="com.example.slowchien.ui.contact.ContactFragment"
+        android:label="@string/title_location"
+        tools:layout="@layout/fragment_notifications" />
+
+    <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.example.slowchien.ui.home.HomeFragment"
+        android:name="com.example.slowchien.ui.settings.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>
