@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SlowChien</string>
+    <string name="title_chat">Chat</string>
+    <string name="title_exchange">Echange</string>
+    <string name="title_location">Location</string>
+    <string name="title_contacts">Contacts</string>
+    <string name="title_settings">Settings</string>
+</resources>

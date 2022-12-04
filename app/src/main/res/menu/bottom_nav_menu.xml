@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <item
+        android:id="@+id/navigation_chat"
+        android:icon="@drawable/ic_question_24"
+        android:title="@string/title_chat" />
+
+    <item
+        android:id="@+id/navigation_header_container"
+        android:icon="@drawable/ic_exchange_24"
+        android:title="@string/title_exchange" />
+
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/ic_location_24"
+        android:title="@string/title_location" />
+
+    <item
+        android:id="@+id/navigation_notifications"
+        android:icon="@drawable/ic_group_24"
+        android:title="@string/title_contacts" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_settings_24"
+        android:title="@string/title_settings" />
+
+
+
+
+</menu>
