@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.slowchien.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
+    //home ça veut dire maison en anglais
 
     private FragmentHomeBinding binding;
 
