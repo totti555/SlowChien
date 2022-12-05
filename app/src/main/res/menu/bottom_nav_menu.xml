@@ -14,7 +14,7 @@
         android:title="@string/title_exchange" />
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_location"
         android:icon="@drawable/ic_location_24"
         android:title="@string/title_location" />
 

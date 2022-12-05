@@ -18,10 +18,10 @@
         tools:layout="@layout/fragment_exchange" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.slowchien.ui.notifications.NotificationsFragment"
+        android:id="@+id/navigation_location"
+        android:name="com.example.slowchien.ui.location.LocationFragment"
         android:label="@string/title_location"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_location" />
 
     <fragment
         android:id="@+id/navigation_contact"
