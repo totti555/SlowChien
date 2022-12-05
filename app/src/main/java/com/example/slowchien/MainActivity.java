@@ -14,7 +14,7 @@ import com.example.slowchien.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 //test test
-    private ActivityMainBinding binding;
+    private ActivityMainBinding binding;g
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
