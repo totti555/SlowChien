@@ -13,7 +13,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.slowchien.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-
+//test test
     private ActivityMainBinding binding;
 
     @Override
