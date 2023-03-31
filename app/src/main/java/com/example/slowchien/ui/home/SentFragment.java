@@ -12,58 +12,71 @@ import android.widget.ListView;
 
 import com.example.slowchien.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SentFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Scanner;
+
 public class SentFragment extends Fragment {
 
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     private ListView mListView;
-    private String[] countryList;
 
-
-     String mParam1;
-     String mParam2;
 
     public SentFragment() {
         // Required empty public constructor
     }
 
 
-    public static SentFragment newInstance(String param1, String param2) {
-        SentFragment fragment = new SentFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sent, container, false);
         mListView = view.findViewById(R.id.simpleListView);
-        countryList = new String[]{"Message 1", "Message 2", "Message 3", "Message 4", "Message 5", "Message 6"};
 
-        // Créez un ArrayAdapter pour lier les données au ListView
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, countryList);
+        // Charger les messages depuis le fichier JSON
+        List<Message> messageList = new ArrayList<>();
+        try {
+            InputStream inputStream = requireActivity().getAssets().open("messages.json");
+            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
+            JSONArray jsonArray = new JSONArray(jsonString);
+            System.out.println("JSON :" + jsonArray);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-        // Liez l'adaptateur à la ListView
-        mListView.setAdapter(arrayAdapter);
+                String receivedDateStr = jsonObject.getString("receivedDate");
+                String sentDateStr = jsonObject.getString("sentDate");
+                String content = jsonObject.getString("content");
+                String name = jsonObject.getString("name");
+                String macAddress = jsonObject.getString("macAddress");
+
+                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                Date receivedDate = inputFormat.parse(receivedDateStr);
+                Date sentDate = inputFormat.parse(sentDateStr);
+
+                System.out.println(new Message(content, receivedDate, sentDate, name, macAddress));
+                messageList.add(new Message(content, receivedDate, sentDate, name, macAddress));
+            }
+        } catch (IOException | JSONException | ParseException e) {
+            e.printStackTrace();
+        }
+
+        // Créer l'adaptateur personnalisé avec la liste de messages
+        MessageAdapter adapter = new MessageAdapter(getActivity(), messageList);
+
+        // Attacher l'adaptateur à la ListView
+        mListView.setAdapter(adapter);
 
         return view;
     }
