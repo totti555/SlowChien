@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.example.slowchien.R;
 
@@ -20,6 +22,8 @@ public class SentFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private ListView mListView;
+    private String[] countryList;
 
 
      String mParam1;
@@ -51,7 +55,16 @@ public class SentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sent, container, false);
+        View view = inflater.inflate(R.layout.fragment_sent, container, false);
+        mListView = view.findViewById(R.id.simpleListView);
+        countryList = new String[]{"Message 1", "Message 2", "Message 3", "Message 4", "Message 5", "Message 6"};
+
+        // Créez un ArrayAdapter pour lier les données au ListView
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, countryList);
+
+        // Liez l'adaptateur à la ListView
+        mListView.setAdapter(arrayAdapter);
+
+        return view;
     }
 }

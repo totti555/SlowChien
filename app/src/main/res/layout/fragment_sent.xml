@@ -6,6 +6,13 @@
     tools:context=".ui.home.SentFragment">
 
     <!-- TODO: Update sent fragment layout -->
+    <ListView
+        android:id="@+id/simpleListView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tab_layout"
+        android:divider="@color/material_blue_grey_800"
+        android:dividerHeight="1dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
