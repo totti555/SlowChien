@@ -27,7 +27,6 @@ public class ExchangeFragment extends Fragment {
     private FragmentExchangeBinding binding;
 
     private BluetoothUtils mBluetoothUtils;
-    private Button mScanButton;
 
     private static final int REQUEST_ENABLE_BT = 1; //ou 456
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 100;
@@ -49,41 +48,38 @@ public class ExchangeFragment extends Fragment {
         exchangeViewModel.getBluetoothBtnLib().observe(getViewLifecycleOwner(), textBtnBT::setText);
 
         // Récupération de la référence à l'objet BluetoothUtils
-        mBluetoothUtils = new BluetoothUtils(getActivity());
+        mBluetoothUtils = new BluetoothUtils(requireActivity());
 
         // Récupération de la référence au bouton de scan
-        mScanButton = root.findViewById(R.id.findBluetoothPeriph);
+        Button mScanButton = root.findViewById(R.id.findBluetoothPeriph);
 
         // Ajout d'un écouteur sur le bouton de scan
-        mScanButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mScanButton.setOnClickListener(v -> {
 
-                BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-                if (bluetoothAdapter == null) {
-                    // Le dispositif ne prend pas en charge Bluetooth
-                    Toast.makeText(getContext(), "Périphérique ne supportant pas le Bluetooth", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (!bluetoothAdapter.isEnabled()) {
-                    // Le Bluetooth n'est pas activé, demander à l'utilisateur de l'activer
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    return;
-                }
-
-                // Demander les permissions nécessaires pour accéder aux périphériques Bluetooth
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_FINE_LOCATION);
-                    return;
-                }
-
-                // Démarrage du scan
-                Toast.makeText(getActivity(), "Scan en cours...", Toast.LENGTH_SHORT).show();
-                mBluetoothUtils.scanLeDevice(true);
+            if (bluetoothAdapter == null) {
+                // Le dispositif ne prend pas en charge Bluetooth
+                Toast.makeText(getContext(), "Périphérique ne supportant pas le Bluetooth", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            if (!bluetoothAdapter.isEnabled()) {
+                // Le Bluetooth n'est pas activé, demander à l'utilisateur de l'activer
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                return;
+            }
+
+            // Demander les permissions nécessaires pour accéder aux périphériques Bluetooth
+            if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_FINE_LOCATION);
+                return;
+            }
+
+            // Démarrage du scan
+            Toast.makeText(getActivity(), "Scan en cours...", Toast.LENGTH_SHORT).show();
+            mBluetoothUtils.scanLeDevice(true);
         });
 
         return root;

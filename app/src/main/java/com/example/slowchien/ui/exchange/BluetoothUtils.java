@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelUuid;
@@ -45,6 +44,7 @@ public class BluetoothUtils {
     private BluetoothGatt mBluetoothGatt;
     private int mConnectionState = (int) STATE_DISCONNECTED;
 
+    @SuppressLint("MissingPermission")
     public BluetoothUtils(Context context) {
 
         BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
@@ -58,17 +58,13 @@ public class BluetoothUtils {
         builder.setTitle("Appareils disponibles");
         builder.setAdapter(mAdapter, null);
         builder.setPositiveButton("Fermer", null);
-        builder.setAdapter(mAdapter, new DialogInterface.OnClickListener() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Connexion au périphérique sélectionné
-                BluetoothDevice device = mDevices.get(which);
-                if(device.getName() != null){
-                    connectToDevice(device, context);
-                } else {
-                    Toast.makeText(context, "Connexion impossible\nPériphérique inconnu", Toast.LENGTH_SHORT).show();
-                }
+        builder.setAdapter(mAdapter, (dialog, which) -> {
+            // Connexion au périphérique sélectionné
+            BluetoothDevice device = mDevices.get(which);
+            if(device.getName() != null){
+                connectToDevice(device, context);
+            } else {
+                Toast.makeText(context, "Connexion impossible\nPériphérique inconnu", Toast.LENGTH_SHORT).show();
             }
         });
         mAlertDialog = builder.create();
@@ -87,12 +83,9 @@ public class BluetoothUtils {
             mAdapter.notifyDataSetChanged();
             mAlertDialog.show();
             mBluetoothAdapter.startLeScan(mLeScanCallback);
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    // Fin du scan après SCAN_PERIOD millisecondes
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                }
+            mHandler.postDelayed(() -> {
+                // Fin du scan après SCAN_PERIOD millisecondes
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
             }, SCAN_PERIOD);
         } else {
             // Arrêt du scan
@@ -102,62 +95,59 @@ public class BluetoothUtils {
     }
 
     // Callback appelé lorsqu'un périphérique est détecté
-    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+    private final BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+        @SuppressLint("MissingPermission")
         @Override
         public void onLeScan(final BluetoothDevice device, final int rssi, byte[] scanRecord) {
             // Traitement effectué lorsqu'un périphérique est détecté
-            mHandler.post(new Runnable() {
-                @SuppressLint("MissingPermission")
-                @Override
-                public void run() {
+            mHandler.post(() -> {
 
-                    // Récupérer les informations contenues dans les services/UUID du périphérique
-                    ParcelUuid[] tabUUIDs = device.getUuids();
+                // Récupérer les informations contenues dans les services/UUID du périphérique
+                @SuppressLint("MissingPermission") ParcelUuid[] tabUUIDs = device.getUuids();
 
-                    // Booléen mis à jour lorsqu'un UUID spécifique à un téléphone mobile est détecté
-                    Boolean deviceIsMobilePhone = false;
+                // Booléen mis à jour lorsqu'un UUID spécifique à un téléphone mobile est détecté
+                boolean deviceIsMobilePhone = false;
 
-                    if (tabUUIDs != null) {
-                        for (ParcelUuid uuid : tabUUIDs) {
-                            UUID u = uuid.getUuid();
-                            switch (u.toString()){
-                                case PROFILE_HFP:
-                                case PROFILE_A2DP:
-                                case PROFILE_PAN:
-                                case PROFILE_HSP:
-                                case PROFILE_HDP:
-                                    deviceIsMobilePhone = true;
-                                    break;
-                                default:
-                                    break;
-                            }
+                if (tabUUIDs != null) {
+                    for (ParcelUuid uuid : tabUUIDs) {
+                        UUID u = uuid.getUuid();
+                        switch (u.toString()){
+                            case PROFILE_HFP:
+                            case PROFILE_A2DP:
+                            case PROFILE_PAN:
+                            case PROFILE_HSP:
+                            case PROFILE_HDP:
+                                deviceIsMobilePhone = true;
+                                break;
+                            default:
+                                break;
                         }
                     }
+                }
 
-                    // Récupérer le nom du périphérique
-                    String deviceName = device.getName();
+                // Récupérer le nom du périphérique
+                @SuppressLint("MissingPermission") String deviceName = device.getName();
 
-                    // Si le nom du périphérique est null, on utilise son adresse MAC pour tenter de trouver un nom
-                    if(deviceName == null){
+                // Si le nom du périphérique est null, on utilise son adresse MAC pour tenter de trouver un nom
+                if(deviceName == null){
 
-                        String deviceAddress = device.getAddress();
+                    String deviceAddress = device.getAddress();
 
-                        // Utilisation de l'adresse MAC pour obtenir le nom du périphérique
-                        BluetoothDevice namedDevice = mBluetoothAdapter.getRemoteDevice(deviceAddress);
-                        deviceName = namedDevice.getName() != null ? "📱 " + namedDevice.getName() : "❔ Inconnu";
+                    // Utilisation de l'adresse MAC pour obtenir le nom du périphérique
+                    BluetoothDevice namedDevice = mBluetoothAdapter.getRemoteDevice(deviceAddress);
+                    deviceName = namedDevice.getName() != null ? "📱 " + namedDevice.getName() : "❔ Inconnu";
 
-                    } else {
-                        deviceName = "📱 " + deviceName;
-                    }
+                } else {
+                    deviceName = "📱 " + deviceName;
+                }
 
-                    String deviceInfo = deviceName + "\n📌 " + device.getAddress(); //+ "\nRSSI: " + rssi;
+                String deviceInfo = deviceName + "\n📌 " + device.getAddress(); //+ "\nRSSI: " + rssi;
 
-                    // Si nouveau périphérique identifié comme un téléphone mobile est trouvé, on l'ajoute à la liste
-                    if (!mDeviceNames.contains(deviceInfo) && deviceIsMobilePhone) {
-                        mDeviceNames.add(deviceInfo);
-                        mDevices.add(device);
-                        mAdapter.notifyDataSetChanged();
-                    }
+                // Si nouveau périphérique identifié comme un téléphone mobile est trouvé, on l'ajoute à la liste
+                if (!mDeviceNames.contains(deviceInfo)) {
+                    mDeviceNames.add(deviceInfo);
+                    mDevices.add(device);
+                    mAdapter.notifyDataSetChanged();
                 }
             });
         }
