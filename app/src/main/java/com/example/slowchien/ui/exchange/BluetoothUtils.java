@@ -144,7 +144,13 @@ public class BluetoothUtils {
                 String deviceInfo = deviceName + "\n📌 " + device.getAddress(); //+ "\nRSSI: " + rssi;
 
                 // Si nouveau périphérique identifié comme un téléphone mobile est trouvé, on l'ajoute à la liste
-                if (!mDeviceNames.contains(deviceInfo)) {
+
+////////////////// Si vous ne voulez QUE les téléphones mobiles, utilisez la ligne suivante et commentez la ligne 152
+                //if (!mDeviceNames.contains(deviceInfo) && deviceIsMobilePhone) { // ONLY MOBILES
+
+////////////////// Si vous voulez TOUS les périphériques détectés, sans filtrer leur type, utilisez la ligne suivante et commentez la ligne 148
+                if (!mDeviceNames.contains(deviceInfo)) { // ALL DEVICES
+
                     mDeviceNames.add(deviceInfo);
                     mDevices.add(device);
                     mAdapter.notifyDataSetChanged();
