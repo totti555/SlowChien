@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
-    //home ça veut dire maison en anglais
 
     private FragmentHomeBinding binding;
     private ViewPager tabHost;
@@ -63,8 +62,14 @@ public class HomeFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
-        adapter.addFragment(new SentFragment(), "Envoyés");
-        adapter.addFragment(new ReceiveFragment(), "Reçus");
+
+        SentFragment sentFragment = new SentFragment();
+        Bundle sentArgs = new Bundle();
+        sentArgs.putString("id", "Sent");
+        sentFragment.setArguments(sentArgs);
+        adapter.addFragment(new SentFragment(), "Receive");
+
+        adapter.addFragment(new ReceiveFragment(), "Sent");
         adapter.addFragment(new ChatFragment(), "Chat");
 
 

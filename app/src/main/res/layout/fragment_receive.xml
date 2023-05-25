@@ -5,11 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.ReceiveFragment">
 
-    <!-- TODO: Update receive fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/title_receive" />
+
+    <ListView
+        android:id="@+id/simpleListView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tab_layout"
+        android:divider="@color/material_blue_grey_800"
+        android:dividerHeight="1dp" />
 
 </FrameLayout>
