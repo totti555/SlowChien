@@ -1,0 +1,23 @@
+{
+  "messages": [
+    {
+      "destination": "01:23:45:67:89:01",
+      "source": "AA:BB:CC:DD:EE:FF",
+      "message": "Salut Jean ! C’est Sophie, comment tu vas ?",
+      "date": "2015-10-10 00:00:00"
+    },
+    {
+      "destination": "00:25:45:65:45:98",
+      "source": "AA:BB:CC:DD:EE:FF",
+      "message": "Voici un message",
+      "date": "2013-06-15 00:00:00"
+    },
+    {
+      "destination": "02:15:45:98:65:12",
+      "source": "AA:BB:CC:DD:EE:FF",
+      "message": "super ! j’arrive au RU",
+      "date": "2010-06-15 00:00:00"
+    }
+  ]
+}
+
