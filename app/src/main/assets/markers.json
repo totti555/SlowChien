@@ -1,0 +1,44 @@
+[
+  {
+    "latitude": 43.6062754,
+    "longitude": 1.4828775,
+    "titre": "Boîte au lettres n°1",
+    "desc": "TOULOUSE - McDonald's"
+  },
+  {
+    "latitude": 45.1888993,
+    "longitude": 5.7245117,
+    "titre": "Boîte au lettres n°2",
+    "desc": "GRENOBLE - Place Victor Hugo"
+  },
+  {
+    "latitude": 48.6352528,
+    "longitude": -2.0228827,
+    "titre": "Boîte au lettres n°3",
+    "desc": "ST MALO - Crêperie La Caraque"
+  },
+  {
+    "latitude": 48.858324,
+    "longitude": 2.294549,
+    "titre": "Boîte au lettres n°4",
+    "desc": "PARIS - Tour Eiffel"
+  },
+  {
+    "latitude": 41.8903246,
+    "longitude": 12.4916374,
+    "titre": "Boîte au lettres n°5",
+    "desc": "ROME - Colisée"
+  },
+  {
+    "latitude": -22.9519452,
+    "longitude": -43.2108761,
+    "titre": "Boîte au lettres n°6",
+    "desc": "BRESIL - Corcovado"
+  },
+  {
+    "latitude": 35.7020262,
+    "longitude": 139.774246,
+    "titre": "Boîte au lettres n°7",
+    "desc": "JAPON - Akihabara"
+  }
+]

@@ -146,7 +146,7 @@ public class BluetoothUtils {
                 // Si nouveau périphérique identifié comme un téléphone mobile est trouvé, on l'ajoute à la liste
 
 ////////////////// Si vous ne voulez QUE les téléphones mobiles, utilisez la ligne suivante et commentez la ligne 152
-                //if (!mDeviceNames.contains(deviceInfo) && deviceIsMobilePhone) { // ONLY MOBILES
+                // if (!mDeviceNames.contains(deviceInfo) && deviceIsMobilePhone) { // ONLY MOBILES
 
 ////////////////// Si vous voulez TOUS les périphériques détectés, sans filtrer leur type, utilisez la ligne suivante et commentez la ligne 148
                 if (!mDeviceNames.contains(deviceInfo)) { // ALL DEVICES
