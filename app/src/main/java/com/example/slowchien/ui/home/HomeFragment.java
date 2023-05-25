@@ -62,8 +62,14 @@ public class HomeFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
-        adapter.addFragment(new SentFragment(), "Sent");
-        adapter.addFragment(new ReceiveFragment(), "Receive");
+
+        SentFragment sentFragment = new SentFragment();
+        Bundle sentArgs = new Bundle();
+        sentArgs.putString("id", "Sent");
+        sentFragment.setArguments(sentArgs);
+        adapter.addFragment(new SentFragment(), "Receive");
+
+        adapter.addFragment(new ReceiveFragment(), "Sent");
         adapter.addFragment(new ChatFragment(), "Chat");
 
 
