@@ -23,6 +23,14 @@ public class Message implements Parcelable {
         this.macAddress = macAddress;
     }
 
+    public Message(Date receivedDate, Date sentDate, String name, String macAddress) {
+        this.title = "";
+        this.receivedDate = receivedDate;
+        this.sentDate = sentDate;
+        this.name = name;
+        this.macAddress = macAddress;
+    }
+
     protected Message(Parcel in) {
         title = in.readString();
         name = in.readString();
@@ -47,9 +55,24 @@ public class Message implements Parcelable {
         }
     };
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "sentDate=" + sentDate +
+                ", receiveDate=" + receivedDate +
+                ", content='" + name + '\'' +
+                '}';
+    }
+
     public String getTitle() {
         return title;
     }
+
+    public Date getReceivedDate() {
+        return receivedDate;
+    }
+
+
 
     public String getFormattedReceivedDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());

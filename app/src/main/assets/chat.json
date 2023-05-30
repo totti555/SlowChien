@@ -4,20 +4,55 @@
     "receivedDate": "2022-01-01",
     "sentDate": "2022-01-01",
     "content": "Ok, bien reçu",
-    "macAddress": "00-B0-D0-63-C2-26"
+    "macAddressSrc": "00-B0-D0-63-C2-26",
+    "macAddressDest": "FF-FF-FF-FF-FF-FF"
   },
   {
     "name": "Myriam",
     "receivedDate": "2022-01-02",
     "sentDate": "2022-01-01",
-    "content": "Message 2",
-    "macAddress": "1B-AE-12-63-45-CD"
+    "content": "1er message",
+    "macAddressSrc": "1B-AE-12-63-45-CD",
+    "macAddressDest": "FF-FF-FF-FF-FF-FF"
+  },
+  {
+    "name": "Myriam",
+    "receivedDate": "2022-03-01",
+    "sentDate": "2022-03-01",
+    "content": "2eme message",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF",
+    "macAddressDest": "1B-AE-12-63-45-CD"
+  },
+  {
+    "name": "Nathan",
+    "receivedDate": "2022-03-01",
+    "sentDate": "2022-01-01",
+    "content": "1er message",
+    "macAddressSrc": "AB-10-D0-12-C2-26",
+    "macAddressDest": "FF-FF-FF-FF-FF-FF"
   },
   {
     "name": "Nathan",
     "receivedDate": "2022-01-03",
-    "sentDate": "2022-01-01",
-    "content": "Message 3",
-    "macAddress": "AB-10-D0-12-C2-26"
+    "sentDate": "2022-05-04",
+    "content": "2eme message",
+    "macAddressSrc": "AB-10-D0-12-C2-26",
+    "macAddressDest": "FF-FF-FF-FF-FF-FF"
+  },
+  {
+    "name": "Myriam",
+    "receivedDate": "2023-04-02",
+    "sentDate": "2023-03-01",
+    "content": "Super merci !",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF",
+    "macAddressDest": "1B-AE-12-63-45-CD"
+  },
+  {
+    "name": "Myriam",
+    "receivedDate": "2022-04-01",
+    "sentDate": "2023-03-03",
+    "content": "Salut c'est Myriam, ça va ?",
+    "macAddressSrc": "1B-AE-12-63-45-CD",
+    "macAddressDest": "FF-FF-FF-FF-FF-FF"
   }
 ]
