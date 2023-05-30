@@ -75,7 +75,7 @@ public class SentFragment extends Fragment {
                 String sentDateStr = jsonObject.getString("sentDate");
                 String content = jsonObject.getString("content");
                 String name = "A: " + jsonObject.getString("name");
-                String macAddress = jsonObject.getString("macAddress");
+                String macAddress = jsonObject.getString("macAddressDest");
 
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 Date receivedDate = inputFormat.parse(receivedDateStr);
@@ -98,7 +98,6 @@ public class SentFragment extends Fragment {
         mListView.setOnItemClickListener((parent, v, position, id) -> {
             Message message = messageList.get(position);
 
-            // Pass the message object as an argument to the next fragment
             Bundle args = new Bundle();
             args.putParcelable("message", (Parcelable) message);
 
@@ -107,7 +106,6 @@ public class SentFragment extends Fragment {
             fragment.setArguments(args);
 
             Intent myIntent = new Intent(view.getContext(), MessageDetailsActivity.class);
-            // myIntent.putExtra("keyString", "received");
 
             System.out.println(message);
             myIntent.putExtra("messageData", message);
