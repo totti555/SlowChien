@@ -1,18 +1,27 @@
 package com.example.slowchien.ui.home;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 
 import com.example.slowchien.R;
 
 import java.util.List;
 
 public class ChatAdapter extends ArrayAdapter<Message> {
+
+    private String myMacAddress = "FF-FF-FF-FF-FF-FF";
 
     public ChatAdapter(Context context, List<Message> messages) {
         super(context, 0, messages);
@@ -25,20 +34,27 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         }
 
         Message message = getItem(position);
-        System.out.println(message);
 
-        TextView titleTextView = convertView.findViewById(R.id.textContent);
-        System.out.println(message.getName());
-        titleTextView.setText(message.getName());
+        ConstraintLayout messageLayout = convertView.findViewById(R.id.messageLayout);
+        TextView textMessage = convertView.findViewById(R.id.textMessage);
+        TextView dateSentView = convertView.findViewById(R.id.textDate);
+        LinearLayout messageOwnerLayout = convertView.findViewById(R.id.messageOwner);
 
-        //TextView dateSentView = convertView.findViewById(R.id.textSentDate);
-        // dateSentView.setText(message.getFormattedReceivedDate());
+        if (message.getMacAddress().equals(myMacAddress)) {
+            messageLayout.setBackgroundResource(R.color.blue);
+            textMessage.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+            messageOwnerLayout.setGravity(Gravity.END);
 
-        // TextView dateReceivedView = convertView.findViewById(R.id.textReceiveDate);
-        // dateReceivedView.setText(message.getFormattedSentDate());
+            dateSentView.setText(message.getFormattedSentDate());
+        } else {
+            messageLayout.setBackgroundResource(R.color.gray);
+            textMessage.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+            messageOwnerLayout.setGravity(Gravity.START);
 
-        //ImageView icon = convertView.findViewById(R.id.mtrl_list_item_icon);
-        // icon.setImageResource(R.drawable.ic_email_24);
+            dateSentView.setText(message.getFormattedReceivedDate());
+        }
+
+        textMessage.setText(message.getName());
 
         return convertView;
     }

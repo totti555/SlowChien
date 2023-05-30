@@ -26,5 +26,26 @@
     "sentDate": "2022-01-01",
     "content": "Message 3",
     "macAddress": "AB-10-D0-12-C2-26"
+  },
+  {
+    "name": "Myriam",
+    "receivedDate": "2022-01-02",
+    "sentDate": "2022-01-01",
+    "content": "WAOUH",
+    "macAddress": "1B-AE-12-63-45-CD"
+  },
+  {
+    "name": "Thomas",
+    "receivedDate": "2022-01-03",
+    "sentDate": "2022-01-01",
+    "content": "CEST",
+    "macAddress": "00-B0-D0-63-C2-26"
+  },
+  {
+    "name": "Nathan",
+    "receivedDate": "2022-01-03",
+    "sentDate": "2022-01-01",
+    "content": "BEAU",
+    "macAddress": "AB-10-D0-12-C2-26"
   }
 ]

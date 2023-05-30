@@ -1,35 +1,48 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/messageOwner"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:gravity="end"> <!-- Ajoutez cette ligne pour aligner les éléments à droite -->
 
-    <TextView
-        android:id="@+id/textContent"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/messageCardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:textColor="@android:color/black" />
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/blue"
+        app:cardCornerRadius="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/messageLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/textMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@android:color/white"
+                android:textAlignment="viewEnd"
+                tools:ignore="MissingConstraints" />
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/textDate"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/textSentDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/textReceiveDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@android:color/black"
-            android:layout_marginStart="16dp" />
-    </LinearLayout>
-
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/gray"
+        android:layout_gravity="center"
+        android:gravity="center"
+        tools:ignore="MissingConstraints" />
 </LinearLayout>

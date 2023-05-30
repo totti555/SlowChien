@@ -3,6 +3,7 @@ package com.example.slowchien.ui.home;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -21,6 +22,8 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -65,8 +68,18 @@ String myMacAddress = "FF-FF-FF-FF-FF-FF";
                         e.printStackTrace();
                     }
 
-                    Message message = new Message(sentDate, receiveDate, content);
+                    Message message = new Message(receiveDate, sentDate, content, macAddressSrc);
                     messagesWithSameMacAddress.add(message);
+                    List<Message> sortedMessages = new ArrayList<>(messagesWithSameMacAddress);
+                    Collections.sort(messagesWithSameMacAddress, new Comparator<Message>() {
+                        @Override
+                        public int compare(Message m1, Message m2) {
+                            Date date1 = m1.getReceivedDate();
+                            Date date2 = m2.getReceivedDate();
+                            return date1.compareTo(date2);
+                        }
+                    });
+                    System.out.println(messagesWithSameMacAddress);
                 }
             }
         } catch (Exception e) {
@@ -81,9 +94,15 @@ String myMacAddress = "FF-FF-FF-FF-FF-FF";
         TextView textView = findViewById(R.id.textName);
         textView.setText(selectedName);
 
+        ImageView icon = findViewById(R.id.mtrl_list_item_icon);
+        icon.setImageResource(R.drawable.ic_baseline_person_24);
+
 
 
         ListView listView = findViewById(R.id.simpleListView);
+        listView.setDividerHeight(4);
+        listView.setDivider(null);
+
         System.out.println("SALUT");
 
         ChatAdapter adapter = new ChatAdapter(this, messagesWithSameMacAddress);

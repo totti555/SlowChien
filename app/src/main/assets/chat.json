@@ -38,5 +38,21 @@
     "content": "2eme message",
     "macAddressSrc": "AB-10-D0-12-C2-26",
     "macAddressDest": "FF-FF-FF-FF-FF-FF"
+  },
+  {
+    "name": "Myriam",
+    "receivedDate": "2023-04-02",
+    "sentDate": "2023-03-01",
+    "content": "Super merci !",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF",
+    "macAddressDest": "1B-AE-12-63-45-CD"
+  },
+  {
+    "name": "Myriam",
+    "receivedDate": "2022-04-01",
+    "sentDate": "2023-03-03",
+    "content": "Salut c'est Myriam, ça va ?",
+    "macAddressSrc": "1B-AE-12-63-45-CD",
+    "macAddressDest": "FF-FF-FF-FF-FF-FF"
   }
 ]
