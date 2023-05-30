@@ -56,7 +56,7 @@ public class ReceiveFragment extends Fragment {
                 String sentDateStr = jsonObject.getString("sentDate");
                 String content = jsonObject.getString("content");
                 String name = "De: " + jsonObject.getString("name");
-                String macAddress = jsonObject.getString("macAddress");
+                String macAddress = jsonObject.getString("macAddressSrc");
 
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 Date receivedDate = inputFormat.parse(receivedDateStr);
