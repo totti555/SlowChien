@@ -1,0 +1,17 @@
+[
+  {
+    "macAddress": "00-B0-D0-63-C2-26",
+    "name": "Thomas",
+    "surname": "Lorthioir",
+    "adress":"le crous",
+    "description": "blablabla"
+  },
+  {
+    "macAddress": "1B-AE-12-63-45-CD",
+    "name": "Myriam",
+    "surname": "Bizart",
+    "adress":"le crous",
+    "description": "blablabla"
+  }
+
+]

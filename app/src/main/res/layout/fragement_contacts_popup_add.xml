@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@android:color/white">
+
+    <!-- Champs pour saisir les informations du contact -->
+    <EditText
+        android:id="@+id/editTextMacAddress"
+        android:name=".MainActivity"
+        android:windowSoftInputMode="stateVisible"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/adresse_mac"
+        android:autofillHints="username"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:name=".MainActivity"
+        android:windowSoftInputMode="stateVisible"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/nom"
+        android:autofillHints="name"
+        app:layout_constraintTop_toBottomOf="@id/editTextMacAddress"
+        app:layout_constraintBottom_toTopOf="@id/editTextSurname" />
+
+    <EditText
+        android:id="@+id/editTextSurname"
+        android:name=".MainActivity"
+        android:windowSoftInputMode="stateVisible"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/pr_nom"
+        android:autofillHints="name"
+        app:layout_constraintTop_toBottomOf="@id/editTextName"
+        app:layout_constraintBottom_toTopOf="@id/editTextAddress" />
+
+    <EditText
+        android:id="@+id/editTextAddress"
+        android:name=".MainActivity"
+        android:windowSoftInputMode="stateVisible"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/adresse"
+        android:autofillHints="postalAddress"
+        app:layout_constraintTop_toBottomOf="@id/editTextSurname"
+        app:layout_constraintBottom_toTopOf="@id/editTextDescription" />
+
+    <EditText
+        android:id="@+id/editTextDescription"
+        android:name=".MainActivity"
+        android:windowSoftInputMode="stateVisible"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/description"
+        app:layout_constraintTop_toBottomOf="@id/editTextAddress"
+        app:layout_constraintBottom_toTopOf="@id/buttonAddContact" />
+
+    <!-- Bouton pour ajouter le contact -->
+    <Button
+        android:id="@+id/buttonAddContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ajouter"
+        app:layout_constraintTop_toBottomOf="@id/editTextDescription"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

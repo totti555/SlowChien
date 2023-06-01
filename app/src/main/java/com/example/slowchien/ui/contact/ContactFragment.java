@@ -1,19 +1,39 @@
 package com.example.slowchien.ui.contact;
 
+import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.slowchien.R;
 import com.example.slowchien.databinding.FragmentContactsBinding;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ContactFragment extends Fragment {
     private FragmentContactsBinding binding;
+    private List<JSONObject> contactList;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -25,6 +45,65 @@ public class ContactFragment extends Fragment {
 
         final TextView textView = binding.textContacts;
         contactViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        final TextView textBtnBT = binding.ButtonAddContact;
+        contactViewModel.getContactBtnLib().observe(getViewLifecycleOwner(), textBtnBT::setText);
+
+        Button mScanButton = root.findViewById(R.id.ButtonAddContact);
+
+        // Ajout d'un écouteur sur le bouton de scan
+            mScanButton.setOnClickListener(v -> {
+
+                // Créer une instance de PopupWindow
+                PopupWindow popupWindow = new PopupWindow(getActivity());
+                // Définir la focusabilité de la popup
+                popupWindow.setFocusable(true);
+                // Permettre à la popup de recevoir les événements tactiles en dehors de sa zone
+                popupWindow.setOutsideTouchable(false);
+                // Charger le contenu de la popup à partir du fichier XML
+                View popupView = getLayoutInflater().inflate(R.layout.fragement_contacts_popup_add, null);
+                popupWindow.setContentView(popupView);
+                // Définir la largeur et la hauteur de la popup
+                popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+                popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+                // Afficher la popup au centre de l'écran
+                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+
+                // Récupérer les références des champs de saisie dans la popup
+                EditText editTextMacAddress = popupView.findViewById(R.id.editTextMacAddress);
+                EditText editTextName = popupView.findViewById(R.id.editTextName);
+                EditText editTextSurname = popupView.findViewById(R.id.editTextSurname);
+                EditText editTextAddress = popupView.findViewById(R.id.editTextAddress);
+                EditText editTextDescription = popupView.findViewById(R.id.editTextDescription);
+                Button buttonAddContact = popupView.findViewById(R.id.buttonAddContact);
+
+                // Écouter l'appui sur le bouton "Ajouter" dans la popup
+                buttonAddContact.setOnClickListener(buttonView -> {
+                    // Récupérer les valeurs saisies dans les champs
+                    String macAddress = editTextMacAddress.getText().toString();
+                    String name = editTextName.getText().toString();
+                    String surname = editTextSurname.getText().toString();
+                    String address = editTextAddress.getText().toString();
+                    String description = editTextDescription.getText().toString();
+
+                    // Créer un nouvel objet JSON avec les informations saisies
+                    JSONObject newContact = new JSONObject();
+                    try {
+                        newContact.put("macAddress", macAddress);
+                        newContact.put("name", name);
+                        newContact.put("surname", surname);
+                        newContact.put("address", address);
+                        newContact.put("description", description);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Fermer la popup
+                    popupWindow.dismiss();
+                });
+            });
+
+
         return root;
     }
 
