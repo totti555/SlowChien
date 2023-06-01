@@ -36,9 +36,13 @@ public class MessageDetailsActivity extends AppCompatActivity {
         TextView content = findViewById(R.id.textView);
         TextView receivedDate = findViewById(R.id.receivedDate);
         TextView sentDate = findViewById(R.id.sentDate);
+        if (pageName.equals("Message envoyé")) {
+            macAddress.setText(message.getMacAddressDest());
+        } else {
+            macAddress.setText(message.getMacAddressSrc());
+        }
 
         name.setText(message.getName());
-        macAddress.setText(message.getMacAddress());
         receivedDate.setText(message.getFormattedReceivedDate());
         sentDate.setText(message.getFormattedSentDate());
         content.setText(message.getTitle());

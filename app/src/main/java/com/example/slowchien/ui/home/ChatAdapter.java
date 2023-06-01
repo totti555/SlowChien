@@ -40,18 +40,18 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         TextView dateSentView = convertView.findViewById(R.id.textDate);
         LinearLayout messageOwnerLayout = convertView.findViewById(R.id.messageOwner);
 
-        if (message.getMacAddress().equals(myMacAddress)) {
+        if (message.getMacAddressSrc().equals(myMacAddress)) {
             messageLayout.setBackgroundResource(R.color.blue);
             textMessage.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
             messageOwnerLayout.setGravity(Gravity.END);
 
-            dateSentView.setText(message.getFormattedSentDate());
+            // dateSentView.setText(message.getFormattedSentDate());
         } else {
             messageLayout.setBackgroundResource(R.color.gray);
             textMessage.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
             messageOwnerLayout.setGravity(Gravity.START);
 
-            dateSentView.setText(message.getFormattedReceivedDate());
+            // dateSentView.setText(message.getFormattedReceivedDate());
         }
 
         textMessage.setText(message.getName());

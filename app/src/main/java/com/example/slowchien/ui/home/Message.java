@@ -13,28 +13,33 @@ public class Message implements Parcelable {
     private final Date receivedDate;
     private final Date sentDate;
     private final String name;
-    private final String macAddress;
+    private final String macAddressSrc;
+    private final String macAddressDest;
 
-    public Message(String title, Date receivedDate, Date sentDate, String name, String macAddress) {
+
+    public Message(String title, Date receivedDate, Date sentDate, String name, String macAddressSrc, String macAddressDest) {
         this.title = title;
         this.receivedDate = receivedDate;
         this.sentDate = sentDate;
         this.name = name;
-        this.macAddress = macAddress;
+        this.macAddressSrc = macAddressSrc;
+        this.macAddressDest = macAddressDest;
     }
 
-    public Message(Date receivedDate, Date sentDate, String name, String macAddress) {
+    public Message(Date receivedDate, Date sentDate, String name, String macAddressSrc, String macAddressDest) {
         this.title = "";
         this.receivedDate = receivedDate;
         this.sentDate = sentDate;
         this.name = name;
-        this.macAddress = macAddress;
+        this.macAddressSrc = macAddressSrc;
+        this.macAddressDest = macAddressDest;
     }
 
     protected Message(Parcel in) {
         title = in.readString();
         name = in.readString();
-        macAddress = in.readString();
+        macAddressSrc = in.readString();
+        macAddressDest = in.readString();
         try {
             receivedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).parse(in.readString());
             sentDate = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).parse(in.readString());
@@ -72,6 +77,10 @@ public class Message implements Parcelable {
         return receivedDate;
     }
 
+    public Date getSentDate() {
+        return sentDate;
+    }
+
 
 
     public String getFormattedReceivedDate() {
@@ -84,8 +93,12 @@ public class Message implements Parcelable {
         return dateFormat.format(sentDate);
     }
 
-    public String getMacAddress() {
-        return macAddress;
+    public String getMacAddressSrc() {
+        return macAddressSrc;
+    }
+
+    public String getMacAddressDest() {
+        return macAddressDest;
     }
 
     public String getName() {
@@ -96,7 +109,8 @@ public class Message implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(name);
-        dest.writeString(macAddress);
+        dest.writeString(macAddressSrc);
+        dest.writeString(macAddressDest);
         dest.writeString(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(receivedDate));
         dest.writeString(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(sentDate));
     }

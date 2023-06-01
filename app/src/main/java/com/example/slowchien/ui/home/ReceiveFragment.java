@@ -44,6 +44,7 @@ public class ReceiveFragment extends Fragment {
 
         // Charger les messages depuis le fichier JSON
         List<Message> messageList = new ArrayList<>();
+
         try {
             InputStream inputStream = requireActivity().getAssets().open("receive.json");
             String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
@@ -56,21 +57,22 @@ public class ReceiveFragment extends Fragment {
                 String sentDateStr = jsonObject.getString("sentDate");
                 String content = jsonObject.getString("content");
                 String name = "De: " + jsonObject.getString("name");
-                String macAddress = jsonObject.getString("macAddressSrc");
+                String macAddressSrc = jsonObject.getString("macAddressSrc");
+                String macAddressDest = jsonObject.getString("macAddressDest");
 
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 Date receivedDate = inputFormat.parse(receivedDateStr);
                 Date sentDate = inputFormat.parse(sentDateStr);
 
-                System.out.println(new Message(content, receivedDate, sentDate, name, macAddress));
-                messageList.add(new Message(content, receivedDate, sentDate, name, macAddress));
+                System.out.println(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
+                messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc,macAddressDest));
             }
         } catch (IOException | JSONException | ParseException e) {
             e.printStackTrace();
         }
 
         // Créer l'adaptateur personnalisé avec la liste de messages
-        MessageAdapter adapter = new MessageAdapter(getActivity(), messageList);
+        MessageAdapter adapter = new MessageAdapter(getActivity(), messageList, "Received");
 
         // Attacher l'adaptateur à la ListView
         mListView.setAdapter(adapter);

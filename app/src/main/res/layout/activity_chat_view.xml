@@ -68,7 +68,7 @@
             android:layout_weight="1"
             android:hint="TODO"
             android:padding="8dp" />
-
+<!--
         <ImageButton
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
@@ -76,6 +76,15 @@
             android:src="@drawable/ic_send_24"
             android:background="@android:color/transparent"
             android:padding="8dp" />
+        -->
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send"
+            android:padding="8dp" />
+
 
     </LinearLayout>
 

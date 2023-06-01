@@ -75,21 +75,22 @@ public class SentFragment extends Fragment {
                 String sentDateStr = jsonObject.getString("sentDate");
                 String content = jsonObject.getString("content");
                 String name = "A: " + jsonObject.getString("name");
-                String macAddress = jsonObject.getString("macAddressDest");
+                String macAddressSrc = jsonObject.getString("macAddressSrc");
+                String macAddressDest = jsonObject.getString("macAddressDest");
 
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 Date receivedDate = inputFormat.parse(receivedDateStr);
                 Date sentDate = inputFormat.parse(sentDateStr);
 
-                System.out.println(new Message(content, receivedDate, sentDate, name, macAddress));
-                messageList.add(new Message(content, receivedDate, sentDate, name, macAddress));
+                System.out.println(new Message(content, receivedDate, sentDate, name,macAddressSrc, macAddressDest));
+                messageList.add(new Message(content, receivedDate, sentDate, name,macAddressSrc, macAddressDest));
             }
         } catch (IOException | JSONException | ParseException e) {
             e.printStackTrace();
         }
 
         // Créer l'adaptateur personnalisé avec la liste de messages
-        MessageAdapter adapter = new MessageAdapter(getActivity(), messageList);
+        MessageAdapter adapter = new MessageAdapter(getActivity(), messageList, "Sent");
 
         // Attacher l'adaptateur à la ListView
         mListView.setAdapter(adapter);

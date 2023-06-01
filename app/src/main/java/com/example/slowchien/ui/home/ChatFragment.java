@@ -88,21 +88,20 @@ public class ChatFragment extends Fragment {
                 String sentDateStr = jsonObject.getString("sentDate");
                 String content = jsonObject.getString("content");
                 String name = jsonObject.getString("name");
-                String macAddress = myMacAddress.equals(jsonObject.getString("macAddressSrc"))
-                        ? jsonObject.getString("macAddressDest")
-                        : jsonObject.getString("macAddressSrc");
+                String macAddressSrc = jsonObject.getString("macAddressSrc");
+                String macAddressDest = jsonObject.getString("macAddressDest");
 
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 Date receivedDate = inputFormat.parse(receivedDateStr);
                 Date sentDate = inputFormat.parse(sentDateStr);
-                messageList.add(new Message(content, receivedDate, sentDate, name, macAddress));
+                messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc,macAddressDest ));
             }
         } catch (IOException | JSONException | ParseException e) {
             e.printStackTrace();
         }
 
 
-        MessageAdapter adapter = new MessageAdapter(getActivity(), messageList);
+        MessageAdapter adapter = new MessageAdapter(getActivity(), messageList, "Chat");
         mListView.setAdapter(adapter);
 
 
