@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tab_layout"
         android:divider="@color/material_blue_grey_800"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="1dp"
+        android:paddingBottom="56dp" />
 
 </FrameLayout>

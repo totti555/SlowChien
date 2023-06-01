@@ -1,0 +1,22 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_message">
+
+    <fragment
+        android:id="@+id/sentFragment"
+        android:name="com.example.slowchien.ui.home.SentFragment"
+        android:label="Sent">
+
+        <action
+            android:id="@+id/action_sentFragment_to_messageDetailsFragment"
+            app:destination="@id/messageDetailsFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/messageDetailsFragment"
+        android:name="com.example.slowchien.ui.home.MessageDetailsFragment"
+        android:label="Details">
+    </fragment>
+
+</navigation>
