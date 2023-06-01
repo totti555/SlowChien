@@ -3,7 +3,7 @@
     "name": "Thomas",
     "receivedDate": "2022-01-01",
     "sentDate": "2022-01-01",
-    "content": "Message 1",
+    "content": "Message de Thomas. Je parle je parle, c'est pour faire plusieurs lignes et voir ce que ça donne au niveau de l'affichage",
     "macAddress": "00-B0-D0-63-C2-26"
   },
   {
@@ -19,5 +19,12 @@
     "sentDate": "2022-01-01",
     "content": "Message 3",
     "macAddress": "00-B0-D0-63-C2-26"
+  },
+  {
+    "name": "Nathan",
+    "receivedDate": "2022-01-03",
+    "sentDate": "2022-01-01",
+    "content": "Message 3",
+    "macAddress": "AB-10-D0-12-C2-26"
   }
 ]

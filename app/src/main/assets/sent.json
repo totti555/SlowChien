@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Thomas",
+    "receivedDate": "2022-01-01",
+    "sentDate": "2022-01-01",
+    "content": "Message de Thomas. Je parle je parle, c'est pour faire plusieurs lignes et voir ce que ça donne au niveau de l'affichage",
+    "macAddressDest": "00-B0-D0-63-C2-26",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF"
+  },
+  {
+    "name": "Myriam",
+    "receivedDate": "2022-01-02",
+    "sentDate": "2022-01-01",
+    "content": "Message 2",
+    "macAddressDest": "1B-AE-12-63-45-CD",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF"
+  },
+  {
+    "name": "Thomas",
+    "receivedDate": "2022-01-03",
+    "sentDate": "2022-01-01",
+    "content": "Message 3",
+    "macAddressDest": "00-B0-D0-63-C2-26",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF"
+  },
+  {
+    "name": "Nathan",
+    "receivedDate": "2022-01-03",
+    "sentDate": "2022-01-01",
+    "content": "Message 3",
+    "macAddressDest": "AB-10-D0-12-C2-26",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF"
+  },
+  {
+    "name": "Myriam",
+    "receivedDate": "2022-01-02",
+    "sentDate": "2022-01-01",
+    "content": "WAOUH",
+    "macAddressDest": "1B-AE-12-63-45-CD",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF"
+  },
+  {
+    "name": "Thomas",
+    "receivedDate": "2022-01-03",
+    "sentDate": "2022-01-01",
+    "content": "CEST",
+    "macAddressDest": "00-B0-D0-63-C2-26",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF"
+  },
+  {
+    "name": "Nathan",
+    "receivedDate": "2022-01-03",
+    "sentDate": "2022-01-01",
+    "content": "BEAU",
+    "macAddressDest": "AB-10-D0-12-C2-26",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF"
+  }
+]
