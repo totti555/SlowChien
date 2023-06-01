@@ -51,6 +51,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/linear_layout"
         android:paddingBottom="56dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
         android:divider="@color/material_blue_grey_800"
         android:dividerHeight="1dp" />
 
@@ -66,9 +68,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="TODO"
+            android:hint="Message"
             android:padding="8dp" />
-<!--
+
         <ImageButton
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
@@ -76,14 +78,7 @@
             android:src="@drawable/ic_send_24"
             android:background="@android:color/transparent"
             android:padding="8dp" />
-        -->
 
-        <Button
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send"
-            android:padding="8dp" />
 
 
     </LinearLayout>

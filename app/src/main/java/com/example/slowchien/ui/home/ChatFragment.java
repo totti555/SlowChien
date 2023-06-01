@@ -17,8 +17,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,10 +80,20 @@ public class ChatFragment extends Fragment {
         // Inflate the layout for this fragment
         // Charger les messages depuis le fichier JSON
         List<Message> messageList = new ArrayList<>();
+        String filePath = getContext().getFilesDir().getPath() + "/chat.json";
 
         try {
-            InputStream inputStream = requireActivity().getAssets().open("chat.json");
-            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
+            FileInputStream fileInputStream = new FileInputStream(filePath);
+            StringBuilder stringBuilder = new StringBuilder();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            String jsonString = stringBuilder.toString();
+            bufferedReader.close();
+            fileInputStream.close();
+
             JSONArray jsonArray = new JSONArray(jsonString);
             filteredList = filterMessages(jsonArray);
             for (JSONObject jsonObject : filteredList) {

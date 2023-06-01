@@ -45,13 +45,13 @@ public class ChatAdapter extends ArrayAdapter<Message> {
             textMessage.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
             messageOwnerLayout.setGravity(Gravity.END);
 
-            // dateSentView.setText(message.getFormattedSentDate());
+            dateSentView.setText(message.getFormattedSentDate());
         } else {
             messageLayout.setBackgroundResource(R.color.gray);
             textMessage.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
             messageOwnerLayout.setGravity(Gravity.START);
 
-            // dateSentView.setText(message.getFormattedReceivedDate());
+            dateSentView.setText(message.getFormattedReceivedDate());
         }
 
         textMessage.setText(message.getName());
