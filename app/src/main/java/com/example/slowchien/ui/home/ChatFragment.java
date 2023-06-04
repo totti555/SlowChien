@@ -2,21 +2,18 @@ package com.example.slowchien.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
 import com.example.slowchien.R;
 import com.example.slowchien.ui.location.JSONUtils;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +31,12 @@ public class ChatFragment extends Fragment {
     static String myMacAddress = "FF-FF-FF-FF-FF-FF";
     private static final String JSON_DIRECTORY = "json";
     private static final String CHAT_FILE = "chat.json";
+
+    private Handler mHandler;
+    private static final long REFRESH_INTERVAL = 5000; // 5 secondes
+    private int lastVisibleItemPosition = 0;
+
+    private MessageAdapter adapter;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -69,13 +72,7 @@ public class ChatFragment extends Fragment {
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
-        mListView = view.findViewById(R.id.simpleListView);
-        // Inflate the layout for this fragment
-        // Charger les messages depuis le fichier JSON
+    private List<Message> loadMessagesFromJson() {
         List<Message> messageList = new ArrayList<>();
 
         try {
@@ -97,16 +94,48 @@ public class ChatFragment extends Fragment {
                 SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 Date receivedDate = inputFormat.parse(receivedDateStr);
                 Date sentDate = inputFormat.parse(sentDateStr);
-                messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc,macAddressDest ));
+                messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
             }
+            adapter = new MessageAdapter(getActivity(), messageList, "Chat");
         } catch (JSONException | ParseException e) {
             e.printStackTrace();
         }
 
+        return messageList;
+    }
 
-        MessageAdapter adapter = new MessageAdapter(getActivity(), messageList, "Chat");
+    private void startRefreshing() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshData();
+                // Planifier le prochain rafraîchissement après l'intervalle défini
+                mHandler.postDelayed(this, REFRESH_INTERVAL);
+            }
+        }, REFRESH_INTERVAL);
+    }
+
+    private void refreshData() {
+        // Scroll position and reload
+        lastVisibleItemPosition = mListView.getFirstVisiblePosition();
+        loadMessagesFromJson();
         mListView.setAdapter(adapter);
+        mListView.setSelection(lastVisibleItemPosition);
+    }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        mListView = view.findViewById(R.id.simpleListView);
+        loadMessagesFromJson();
+        mListView.setAdapter(adapter);
 
         mListView.setOnItemClickListener((parent, v, position, id) -> {
             try {
@@ -118,7 +147,6 @@ public class ChatFragment extends Fragment {
                 String name = selectedMessage.getString("name");
 
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
-
                 intent.putExtra("selectedMacAddress", selectedMacAddress);
                 intent.putExtra("name", name);
 
@@ -126,8 +154,10 @@ public class ChatFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         });
+
+        mHandler = new Handler();
+        startRefreshing();
 
         return view;
     }

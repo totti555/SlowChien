@@ -51,7 +51,7 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         dateReceivedView.setText(message.getFormattedSentDate());
 
         ImageView icon = convertView.findViewById(R.id.mtrl_list_item_icon);
-        icon.setImageResource(R.drawable.ic_email_24);
+        icon.setImageResource(R.drawable.ic_baseline_person_24);
 
         return convertView;
     }

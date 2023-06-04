@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.slowchien.R;
 import com.example.slowchien.ui.location.JSONUtils;
@@ -146,14 +146,15 @@ public class ChatActivity extends AppCompatActivity {
                     sendButton.setEnabled(true); // Activer le bouton d'envoi lorsque du texte est saisi
 
                     // Changer la couleur de l'icône en violet
-                    Drawable icon = getResources().getDrawable(R.drawable.ic_send_24);
+                    Drawable icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_send_24, null);
+                    assert icon != null;
                     icon.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.SRC_IN);
                     sendButton.setImageDrawable(icon);
                 } else {
                     sendButton.setEnabled(false); // Désactiver le bouton d'envoi lorsque le champ est vide
 
                     // Rétablir la couleur de l'icône par défaut
-                    Drawable icon = getResources().getDrawable(R.drawable.ic_send_24);
+                    Drawable icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_send_24, null);
                     sendButton.setImageDrawable(icon);
                 }
             }

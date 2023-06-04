@@ -53,7 +53,6 @@ public class SentFragment extends Fragment {
 
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
             JSONArray jsonArray = new JSONArray(jsonString);
-            System.out.println("REFRESH");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String receivedDateStr = jsonObject.getString("receivedDate");

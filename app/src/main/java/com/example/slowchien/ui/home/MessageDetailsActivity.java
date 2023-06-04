@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +37,10 @@ public class MessageDetailsActivity extends AppCompatActivity {
         TextView content = findViewById(R.id.textView);
         TextView receivedDate = findViewById(R.id.receivedDate);
         TextView sentDate = findViewById(R.id.sentDate);
+
+        ImageView icon = findViewById(R.id.mtrl_list_item_icon);
+        icon.setImageResource(R.drawable.ic_baseline_person_24);
+
         if (pageName.equals("Message envoyé")) {
             macAddress.setText(message.getMacAddressDest());
         } else {
