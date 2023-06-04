@@ -63,9 +63,12 @@ public class Message implements Parcelable {
     @Override
     public String toString() {
         return "Message{" +
-                "sentDate=" + sentDate +
-                ", receiveDate=" + receivedDate +
-                ", content='" + name + '\'' +
+                "title='" + title + '\'' +
+                ", receivedDate=" + receivedDate +
+                ", sentDate=" + sentDate +
+                ", name='" + name + '\'' +
+                ", macAddressSrc='" + macAddressSrc + '\'' +
+                ", macAddressDest='" + macAddressDest + '\'' +
                 '}';
     }
 

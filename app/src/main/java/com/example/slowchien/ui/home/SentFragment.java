@@ -6,22 +6,11 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.slowchien.MainActivity;
-import com.example.slowchien.ui.home.HomeFragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.viewpager.widget.ViewPager;
-
+import android.os.Handler;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.slowchien.R;
@@ -32,54 +21,44 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.Scanner;
 
 public class SentFragment extends Fragment {
 
-
-
     private ListView mListView;
-    private boolean isFragmentDisplayed = false;
     private static final String JSON_DIRECTORY = "json";
     private static final String SENT_FILE = "sent.json";
     private static final String MESSAGE_FILE = "message.json";
 
+    private Handler mHandler;
+    private static final long REFRESH_INTERVAL = 5000; // 5 secondes
+    private int currentScrollPosition = 0;
+
+    private List<Message> messageList;
+    private MessageAdapter adapter;
 
     public SentFragment() {
         // Required empty public constructor
     }
 
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sent, container, false);
-        View viewHome = inflater.inflate(R.layout.fragment_home, container, false);
-        mListView = view.findViewById(R.id.simpleListView);
-
+    private void loadMessagesFromJson() {
         // Charger les messages depuis le fichier JSON
-        List<Message> messageList = new ArrayList<>();
+        messageList = new ArrayList<>();
+
         try {
             File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
             File file = new File(directory, SENT_FILE);
-            // JSONUtils.createSentReceiveJson(requireContext(),SENT_FILE,MESSAGE_FILE, "macAddressSrc");
 
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
             JSONArray jsonArray = new JSONArray(jsonString);
-            System.out.println("JSON :" + jsonArray);
+            System.out.println("REFRESH");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                System.out.println("POPO");
-                System.out.println(jsonObject);
                 String receivedDateStr = jsonObject.getString("receivedDate");
                 String sentDateStr = jsonObject.getString("sentDate");
                 String content = jsonObject.getString("content");
@@ -87,7 +66,7 @@ public class SentFragment extends Fragment {
                 String macAddressSrc = jsonObject.getString("macAddressSrc");
                 String macAddressDest = jsonObject.getString("macAddressDest");
                 SimpleDateFormat inputFormat;
-                if (receivedDateStr.contains("GMT") || sentDateStr.contains("GMT") ) {
+                if (receivedDateStr.contains("GMT") || sentDateStr.contains("GMT")) {
                     inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.ENGLISH);
                 } else if (sentDateStr.contains(":") || receivedDateStr.contains(":")) {
                     inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
@@ -96,43 +75,67 @@ public class SentFragment extends Fragment {
                 }
                 Date receivedDate = inputFormat.parse(receivedDateStr);
                 Date sentDate = inputFormat.parse(sentDateStr);
-
-                System.out.println(content);
-                messageList.add(new Message(content, receivedDate, sentDate, name,macAddressSrc, macAddressDest));
+                messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
             }
+            adapter = new MessageAdapter(getActivity(), messageList, "Sent");
         } catch (JSONException | ParseException e) {
             e.printStackTrace();
         }
+    }
 
-        // Créer l'adaptateur personnalisé avec la liste de messages
-        MessageAdapter adapter = new MessageAdapter(getActivity(), messageList, "Sent");
+    private void startRefreshing() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshData();
 
-        // Attacher l'adaptateur à la ListView
+                // Planifier le prochain rafraîchissement après l'intervalle défini
+                mHandler.postDelayed(this, REFRESH_INTERVAL);
+            }
+        }, REFRESH_INTERVAL);
+    }
+
+    private void refreshData() {
+        loadMessagesFromJson();
+        mListView.setAdapter(adapter); // Réattacher l'adaptateur à la ListView
+        System.out.println("LISTEEEEEEEEEE (after refresh):");
+        System.out.println(messageList);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_sent, container, false);
+        mListView = view.findViewById(R.id.simpleListView);
+        loadMessagesFromJson();
+        // adapter = new MessageAdapter(getActivity(), messageList, "Sent");
         mListView.setAdapter(adapter);
 
-        // Afficher le contenu d'un message lors d'un click
+
         mListView.setOnItemClickListener((parent, v, position, id) -> {
             Message message = messageList.get(position);
 
             Bundle args = new Bundle();
-            args.putParcelable("message", (Parcelable) message);
-
+            args.putParcelable("message", message);
 
             Fragment fragment = new MessageDetailsFragment();
             fragment.setArguments(args);
 
             Intent myIntent = new Intent(view.getContext(), MessageDetailsActivity.class);
-
-            System.out.println(message);
             myIntent.putExtra("messageData", message);
             myIntent.putExtra("pageName", "Message envoyé");
             view.getContext().startActivity(myIntent);
-
         });
 
-
+        mHandler = new Handler();
+        startRefreshing();
 
         return view;
     }
-
 }
