@@ -25,11 +25,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.slowchien.R;
+import com.example.slowchien.ui.location.JSONUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -47,6 +49,9 @@ public class SentFragment extends Fragment {
 
     private ListView mListView;
     private boolean isFragmentDisplayed = false;
+    private static final String JSON_DIRECTORY = "json";
+    private static final String SENT_FILE = "sent.json";
+    private static final String MESSAGE_FILE = "message.json";
 
 
     public SentFragment() {
@@ -64,28 +69,38 @@ public class SentFragment extends Fragment {
         // Charger les messages depuis le fichier JSON
         List<Message> messageList = new ArrayList<>();
         try {
-            InputStream inputStream = requireActivity().getAssets().open("sent.json");
-            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
+            File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
+            File file = new File(directory, SENT_FILE);
+            // JSONUtils.createSentReceiveJson(requireContext(),SENT_FILE,MESSAGE_FILE, "macAddressSrc");
+
+            String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
             JSONArray jsonArray = new JSONArray(jsonString);
             System.out.println("JSON :" + jsonArray);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-
+                System.out.println("POPO");
+                System.out.println(jsonObject);
                 String receivedDateStr = jsonObject.getString("receivedDate");
                 String sentDateStr = jsonObject.getString("sentDate");
                 String content = jsonObject.getString("content");
                 String name = "A: " + jsonObject.getString("name");
                 String macAddressSrc = jsonObject.getString("macAddressSrc");
                 String macAddressDest = jsonObject.getString("macAddressDest");
-
-                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat inputFormat;
+                if (receivedDateStr.contains("GMT") || sentDateStr.contains("GMT") ) {
+                    inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.ENGLISH);
+                } else if (sentDateStr.contains(":") || receivedDateStr.contains(":")) {
+                    inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                } else {
+                    inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                }
                 Date receivedDate = inputFormat.parse(receivedDateStr);
                 Date sentDate = inputFormat.parse(sentDateStr);
 
-                System.out.println(new Message(content, receivedDate, sentDate, name,macAddressSrc, macAddressDest));
+                System.out.println(content);
                 messageList.add(new Message(content, receivedDate, sentDate, name,macAddressSrc, macAddressDest));
             }
-        } catch (IOException | JSONException | ParseException e) {
+        } catch (JSONException | ParseException e) {
             e.printStackTrace();
         }
 

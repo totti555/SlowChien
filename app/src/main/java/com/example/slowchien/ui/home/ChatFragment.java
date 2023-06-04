@@ -5,23 +5,19 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.slowchien.R;
+import com.example.slowchien.ui.location.JSONUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,13 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 
 public class ChatFragment extends Fragment {
 
     private ListView mListView;
     private List<JSONObject> filteredList;
     static String myMacAddress = "FF-FF-FF-FF-FF-FF";
+    private static final String JSON_DIRECTORY = "json";
+    private static final String CHAT_FILE = "chat.json";
 
     public ChatFragment() {
         // Required empty public constructor
@@ -80,19 +77,12 @@ public class ChatFragment extends Fragment {
         // Inflate the layout for this fragment
         // Charger les messages depuis le fichier JSON
         List<Message> messageList = new ArrayList<>();
-        String filePath = getContext().getFilesDir().getPath() + "/chat.json";
 
         try {
-            FileInputStream fileInputStream = new FileInputStream(filePath);
-            StringBuilder stringBuilder = new StringBuilder();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            String jsonString = stringBuilder.toString();
-            bufferedReader.close();
-            fileInputStream.close();
+            File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
+            File file = new File(directory, CHAT_FILE);
+            JSONUtils.créerChatJson(requireContext());
+            String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
 
             JSONArray jsonArray = new JSONArray(jsonString);
             filteredList = filterMessages(jsonArray);
@@ -109,7 +99,7 @@ public class ChatFragment extends Fragment {
                 Date sentDate = inputFormat.parse(sentDateStr);
                 messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc,macAddressDest ));
             }
-        } catch (IOException | JSONException | ParseException e) {
+        } catch (JSONException | ParseException e) {
             e.printStackTrace();
         }
 

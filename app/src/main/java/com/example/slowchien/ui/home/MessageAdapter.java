@@ -27,7 +27,6 @@ public class MessageAdapter extends ArrayAdapter<Message> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_list_view, parent, false);
         }
 
-        System.out.println("Message adapter chargement");
 
         Message message = getItem(position);
 

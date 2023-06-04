@@ -12,11 +12,13 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.slowchien.R;
+import com.example.slowchien.ui.location.JSONUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -31,6 +33,8 @@ import java.util.Scanner;
 public class ReceiveFragment extends Fragment {
 
     private ListView mListView;
+    private static final String JSON_DIRECTORY = "json";
+    private static final String RECEIVE_FILE = "received.json";
     public ReceiveFragment() {
         // Required empty public constructor
     }
@@ -46,8 +50,12 @@ public class ReceiveFragment extends Fragment {
         List<Message> messageList = new ArrayList<>();
 
         try {
-            InputStream inputStream = requireActivity().getAssets().open("receive.json");
-            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
+            File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
+            File file = new File(directory, RECEIVE_FILE);
+            JSONUtils.créerChatJson(requireContext());
+            String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
+
+
             JSONArray jsonArray = new JSONArray(jsonString);
             System.out.println("JSON :" + jsonArray);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -60,14 +68,21 @@ public class ReceiveFragment extends Fragment {
                 String macAddressSrc = jsonObject.getString("macAddressSrc");
                 String macAddressDest = jsonObject.getString("macAddressDest");
 
-                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat inputFormat;
+                if (receivedDateStr.contains("GMT") || sentDateStr.contains("GMT") ) {
+                    inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.ENGLISH);
+                } else if (sentDateStr.contains(":") || receivedDateStr.contains(":")) {
+                    inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                } else {
+                    inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                }
                 Date receivedDate = inputFormat.parse(receivedDateStr);
                 Date sentDate = inputFormat.parse(sentDateStr);
 
                 System.out.println(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
                 messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc,macAddressDest));
             }
-        } catch (IOException | JSONException | ParseException e) {
+        } catch (JSONException | ParseException e) {
             e.printStackTrace();
         }
 
