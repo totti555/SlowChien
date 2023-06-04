@@ -3,6 +3,8 @@ package com.example.slowchien.ui.location;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.slowchien.ui.home.Message;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +19,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class JSONUtils {
 
@@ -287,6 +293,20 @@ public class JSONUtils {
             }
         }
         return false;
+    }
+
+    public static void sortMessagesByNewestDate(List<Message> messageList, String pageName) {
+        Collections.sort(messageList, new Comparator<Message>() {
+            @Override
+            public int compare(Message message1, Message message2) {
+                if (pageName == "Sent") {
+                    return message2.getSentDate().compareTo(message1.getSentDate());
+                }
+                else {
+                    return message2.getReceivedDate().compareTo(message1.getReceivedDate());
+                }
+            }
+        });
     }
 
 

@@ -1,13 +1,11 @@
 package com.example.slowchien.ui.home;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +31,10 @@ public class SentFragment extends Fragment {
     private ListView mListView;
     private static final String JSON_DIRECTORY = "json";
     private static final String SENT_FILE = "sent.json";
-    private static final String MESSAGE_FILE = "message.json";
 
     private Handler mHandler;
     private static final long REFRESH_INTERVAL = 5000; // 5 secondes
-    private int currentScrollPosition = 0;
+    private int lastVisibleItemPosition = 0;
 
     private List<Message> messageList;
     private MessageAdapter adapter;
@@ -77,6 +74,7 @@ public class SentFragment extends Fragment {
                 Date sentDate = inputFormat.parse(sentDateStr);
                 messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
             }
+            JSONUtils.sortMessagesByNewestDate(messageList,"Sent");
             adapter = new MessageAdapter(getActivity(), messageList, "Sent");
         } catch (JSONException | ParseException e) {
             e.printStackTrace();
@@ -88,7 +86,6 @@ public class SentFragment extends Fragment {
             @Override
             public void run() {
                 refreshData();
-
                 // Planifier le prochain rafraîchissement après l'intervalle défini
                 mHandler.postDelayed(this, REFRESH_INTERVAL);
             }
@@ -96,11 +93,15 @@ public class SentFragment extends Fragment {
     }
 
     private void refreshData() {
+        // Scroll position and reload
+        lastVisibleItemPosition = mListView.getFirstVisiblePosition();
         loadMessagesFromJson();
-        mListView.setAdapter(adapter); // Réattacher l'adaptateur à la ListView
-        System.out.println("LISTEEEEEEEEEE (after refresh):");
-        System.out.println(messageList);
+        mListView.setAdapter(adapter);
+        mListView.setSelection(lastVisibleItemPosition);
     }
+
+
+
 
     @Override
     public void onDestroyView() {
@@ -114,7 +115,6 @@ public class SentFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_sent, container, false);
         mListView = view.findViewById(R.id.simpleListView);
         loadMessagesFromJson();
-        // adapter = new MessageAdapter(getActivity(), messageList, "Sent");
         mListView.setAdapter(adapter);
 
 
