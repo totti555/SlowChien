@@ -1,8 +1,7 @@
 package com.example.slowchien.ui.contact;
 
-import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,20 +18,22 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.slowchien.R;
 import com.example.slowchien.databinding.FragmentContactsBinding;
+import com.example.slowchien.ui.location.JSONUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Scanner;
 
 public class ContactFragment extends Fragment {
     private FragmentContactsBinding binding;
-    private List<JSONObject> contactList;
+    private static final String CONTACT_FILE = "contact.json";
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -43,9 +44,7 @@ public class ContactFragment extends Fragment {
         binding = FragmentContactsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textContacts;
-        contactViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
+        initJSONFile();
         final TextView textBtnBT = binding.ButtonAddContact;
         contactViewModel.getContactBtnLib().observe(getViewLifecycleOwner(), textBtnBT::setText);
 
@@ -86,17 +85,7 @@ public class ContactFragment extends Fragment {
                     String address = editTextAddress.getText().toString();
                     String description = editTextDescription.getText().toString();
 
-                    // Créer un nouvel objet JSON avec les informations saisies
-                    JSONObject newContact = new JSONObject();
-                    try {
-                        newContact.put("macAddress", macAddress);
-                        newContact.put("name", name);
-                        newContact.put("surname", surname);
-                        newContact.put("address", address);
-                        newContact.put("description", description);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    JSONUtils.ajouterValeurJSONContact(getContext(), CONTACT_FILE,macAddress, name,surname,address,description);
 
                     // Fermer la popup
                     popupWindow.dismiss();
@@ -107,9 +96,52 @@ public class ContactFragment extends Fragment {
         return root;
     }
 
+
+    public void initJSONFile(){
+
+        try {
+            // Récupération du fichier JSON contenu dans le répertoire assets
+            InputStream inputStream = requireActivity().getAssets().open(CONTACT_FILE);
+            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
+
+            // Copie du fichier JSON dans le stockage interne depuis le fichier assets
+            JSONUtils.saveJsonFileToInternalStorage(getContext(), CONTACT_FILE, jsonString);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static List<JSONObject> getContactsFromJson(Context context, String fileName) {
+        List<JSONObject> contactList = new ArrayList<>();
+
+        try {
+            InputStream inputStream = context.getAssets().open(fileName);
+            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
+
+            JSONArray jsonArray = new JSONArray(jsonString);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                contactList.add(jsonObject);
+            }
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return contactList;
+    }
+
+
+
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
+
+
 }
