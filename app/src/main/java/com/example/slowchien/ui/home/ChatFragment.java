@@ -79,7 +79,6 @@ public class ChatFragment extends Fragment {
             }
 
             if (filteredMessages.size() > 0) {
-                // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 SimpleDateFormat dateFormat;
                 String dateStr = filteredMessages.get(0).getString("sentDate");
 
