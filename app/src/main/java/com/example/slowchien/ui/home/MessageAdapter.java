@@ -14,8 +14,11 @@ import java.util.List;
 
 public class MessageAdapter extends ArrayAdapter<Message> {
 
-    public MessageAdapter(Context context, List<Message> messages) {
+    private String pageName;
+
+    public MessageAdapter(Context context, List<Message> messages, String pageName) {
         super(context, 0, messages);
+        this.pageName = pageName;
     }
 
     @Override
@@ -23,6 +26,7 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_list_view, parent, false);
         }
+
 
         Message message = getItem(position);
 
@@ -33,7 +37,12 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         titleTextView.setText(message.getTitle());
 
         TextView macAddressView = convertView.findViewById(R.id.macAddressView);
-        macAddressView.setText(message.getMacAddress());
+
+        if (pageName.equals("Sent")) {
+            macAddressView.setText(message.getMacAddressDest());
+        } else {
+            macAddressView.setText(message.getMacAddressSrc());
+        }
 
         TextView dateSentView = convertView.findViewById(R.id.receivedDate);
         dateSentView.setText(message.getFormattedReceivedDate());
@@ -42,7 +51,7 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         dateReceivedView.setText(message.getFormattedSentDate());
 
         ImageView icon = convertView.findViewById(R.id.mtrl_list_item_icon);
-        icon.setImageResource(R.drawable.ic_email_24);
+        icon.setImageResource(R.drawable.ic_baseline_person_24);
 
         return convertView;
     }
