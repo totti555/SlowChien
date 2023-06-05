@@ -71,7 +71,6 @@ public class ContactFragment extends Fragment {
                 // Récupérer les références des champs de saisie dans la popup
                 EditText editTextMacAddress = popupView.findViewById(R.id.editTextMacAddress);
                 EditText editTextName = popupView.findViewById(R.id.editTextName);
-                EditText editTextSurname = popupView.findViewById(R.id.editTextSurname);
                 EditText editTextAddress = popupView.findViewById(R.id.editTextAddress);
                 EditText editTextDescription = popupView.findViewById(R.id.editTextDescription);
                 Button buttonAddContact = popupView.findViewById(R.id.buttonAddContact);
@@ -81,11 +80,10 @@ public class ContactFragment extends Fragment {
                     // Récupérer les valeurs saisies dans les champs
                     String macAddress = editTextMacAddress.getText().toString();
                     String name = editTextName.getText().toString();
-                    String surname = editTextSurname.getText().toString();
                     String address = editTextAddress.getText().toString();
                     String description = editTextDescription.getText().toString();
 
-                    JSONUtils.ajouterValeurJSONContact(getContext(), CONTACT_FILE,macAddress, name,surname,address,description);
+                    JSONUtils.ajouterValeurJSONContact(getContext(), CONTACT_FILE,macAddress, name,address,description);
 
                     // Fermer la popup
                     popupWindow.dismiss();

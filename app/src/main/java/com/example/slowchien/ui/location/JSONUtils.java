@@ -283,7 +283,7 @@ public class JSONUtils {
         }
     }
 
-    public static void ajouterValeurJSONContact(Context context, String contactFile, String macAddress, String name, String surname, String address, String description) {
+    public static void ajouterValeurJSONContact(Context context, String contactFile, String macAddress, String name, String address, String description) {
         try {
             // Récupération du fichier JSON existant depuis le stockage interne
             File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
@@ -300,8 +300,7 @@ public class JSONUtils {
 
             nouvelObjet.put("macAddress", macAddress);
             nouvelObjet.put("name", name);
-            nouvelObjet.put("surname", surname);
-            nouvelObjet.put("adress", address);
+            nouvelObjet.put("address", address);
             nouvelObjet.put("description", description);
 
             // Ajout du nouvel objet au tableau JSON existant
@@ -310,7 +309,7 @@ public class JSONUtils {
             // Enregistrement du tableau JSON mis à jour dans le fichier
             writeJSONToFile(file.getAbsolutePath(), jsonArray.toString());
 
-            Log.d(TAG, "Fichier JSON modifié avec succès.");
+            Log.d(TAG, "Fichier JSON contact modifié avec succès.");
 
         } catch (JSONException e) {
 
