@@ -34,9 +34,7 @@
             android:name="org.osmdroid.tileprovider.modules.ConfigurableMapTileDownloadProvider.tilePath"
             android:value="/sdcard/osmdroid/tiles/" />
         <activity
-
             android:name=".MainActivity"
-            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>

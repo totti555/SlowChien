@@ -5,14 +5,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 
 import com.example.slowchien.R;
@@ -40,7 +37,7 @@ public class ChatAdapter extends ArrayAdapter<Message> {
         TextView dateSentView = convertView.findViewById(R.id.textDate);
         LinearLayout messageOwnerLayout = convertView.findViewById(R.id.messageOwner);
 
-        if (message.getMacAddress().equals(myMacAddress)) {
+        if (message.getMacAddressSrc().equals(myMacAddress)) {
             messageLayout.setBackgroundResource(R.color.blue);
             textMessage.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
             messageOwnerLayout.setGravity(Gravity.END);
