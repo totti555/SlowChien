@@ -8,8 +8,8 @@ android {
 
     defaultConfig {
         applicationId "com.example.slowchien"
-        minSdk 21
-        targetSdk 32
+        minSdkVersion 21
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
 
