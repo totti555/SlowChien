@@ -18,7 +18,7 @@ SlowChien comprend plusieurs fonctionnalités clés :
 
 ## Documentation technique
 
-Pour obtenir une documentation technique complète de l'application SlowChien, veuillez consulter la [documentation technique]([lien_vers_la_doc_technique](https://docs.google.com/document/d/1bFWQWu4ItsivcBA1jWCoBBhqtFZnzbemSOB8_1j3kgQ/edit?usp=sharing)) disponible en open source. Cette documentation fournit une description détaillée de l'architecture, des composants et des fonctionnalités de l'application, ce qui facilite le développement et la compréhension du code source.
+Pour obtenir une documentation technique complète de l'application SlowChien, veuillez consulter la [Documentation technique](https://docs.google.com/document/d/1bFWQWu4ItsivcBA1jWCoBBhqtFZnzbemSOB8_1j3kgQ/edit?usp=sharing){: style="color: blue;"} disponible en open source. Cette documentation fournit une description détaillée de l'architecture, des composants et des fonctionnalités de l'application, ce qui facilite le développement et la compréhension du code source.
 
 ## Installation
 
