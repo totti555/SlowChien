@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
             // Récupération du fichier JSON contenu dans le répertoire assets
             InputStream inputStream = getAssets().open(file);
             String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
-            System.out.println(jsonString);
             // Copie du fichier JSON dans le stockage interne depuis le fichier assets
             JSONUtils.saveJsonFileToInternalStorage(getApplicationContext(), file, jsonString);
 
