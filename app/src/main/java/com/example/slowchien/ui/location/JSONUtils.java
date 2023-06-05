@@ -2,6 +2,7 @@ package com.example.slowchien.ui.location;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.slowchien.MainActivity;
 import com.example.slowchien.ui.home.Message;
@@ -18,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ public class JSONUtils {
     private static final String JSON_DIRECTORY = "json";
     private static final String MARKERS_FILE = "markers.json";
     private static final String MESSAGES_FILE = "messages.json";
+    private static final String CONTACT_FILE = "contact.json";
     private static final String CHAT_FILE = "chat.json";
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
@@ -130,6 +133,33 @@ public class JSONUtils {
                 break;
             default:
                 break;
+        }
+    }
+
+    public static void saveJsonToFile(Context context, String jsonContent, String originalFileName) {
+        try {
+            // Obtention du répertoire de fichiers internes
+            File filesDir = context.getFilesDir();
+
+            // Création du nouveau nom de fichier
+            String newFileName = "new_" + originalFileName;
+            File newFile = new File(filesDir, newFileName);
+
+            // Création du flux de sortie
+            OutputStream outputStream = new FileOutputStream(newFile);
+
+            // Conversion du JSON en tableau de bytes
+            byte[] jsonBytes = jsonContent.getBytes();
+
+            // Écriture du contenu dans le fichier
+            outputStream.write(jsonBytes);
+            Toast.makeText(context, "Données envoyées avec succès !", Toast.LENGTH_SHORT).show();
+
+            // Fermeture du flux de sortie
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérer les exceptions ou afficher un message d'erreur
         }
     }
 
@@ -283,6 +313,44 @@ public class JSONUtils {
             e.printStackTrace();
         }
     }
+
+    public static void ajouterValeurJSONContact(Context context, String contactFile, String macAddress, String name, String address, String description) {
+        try {
+            // Récupération du fichier JSON existant depuis le stockage interne
+            File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
+            File file = new File(directory, CONTACT_FILE);
+
+            // Chargement du fichier JSON
+            String jsonString = loadJSONFromFile(file.getAbsolutePath());
+
+            // Conversion la chaîne JSON en un tableau JSON
+            JSONArray jsonArray = new JSONArray(jsonString);
+
+            // Création du nouvel objet JSON
+            JSONObject nouvelObjet = new JSONObject();
+
+            nouvelObjet.put("macAddress", macAddress);
+            nouvelObjet.put("name", name);
+            nouvelObjet.put("address", address);
+            nouvelObjet.put("description", description);
+
+            // Ajout du nouvel objet au tableau JSON existant
+            jsonArray.put(nouvelObjet);
+
+            // Enregistrement du tableau JSON mis à jour dans le fichier
+            writeJSONToFile(file.getAbsolutePath(), jsonArray.toString());
+
+            Log.d(TAG, "Fichier JSON contact modifié avec succès.");
+
+        } catch (JSONException e) {
+
+            Log.e(TAG, "Erreur lors de l'ajout de la valeur JSON : " + e.getMessage());
+            e.printStackTrace();
+        }
+
+
+    }
+
 
     private static boolean containsMessage(JSONArray jsonArray, JSONObject message) {
         for (int i = 0; i < jsonArray.length(); i++) {
