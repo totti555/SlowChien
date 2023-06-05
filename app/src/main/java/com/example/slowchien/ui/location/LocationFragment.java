@@ -88,10 +88,17 @@ public class LocationFragment extends Fragment {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        runnable = () -> {
-                            showPopupCreationMarker(event); // Appeler la méthode en passant le paramètre
-                        };
-                        handler.postDelayed(runnable, 1000);
+                        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED
+                                && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                                    == PackageManager.PERMISSION_GRANTED) {
+
+                            runnable = () -> {
+                                showPopupCreationMarker(event); // Appeler la méthode en passant le paramètre
+                            };
+                            handler.postDelayed(runnable, 1000);
+
+                        }
                         break;
                     case MotionEvent.ACTION_UP:
                         handler.removeCallbacks(runnable);
@@ -277,7 +284,7 @@ public class LocationFragment extends Fragment {
                 mapView.getController().setCenter(new GeoPoint(48.85656654552703, 2.3520098484730387)); // coordonnées par défaut de Paris
             }
             mapView.setMinZoomLevel(5.0);
-        }, 1000); // Attendre 0.5 seconde (500 millisecondes) avant de récupérer la position
+        }, 500); // Attendre 0.5 seconde (500 millisecondes) avant de récupérer la position
     }
 
     @Override
@@ -315,7 +322,7 @@ public class LocationFragment extends Fragment {
             String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
 
             // Copie du fichier JSON dans le stockage interne depuis le fichier assets
-            JSONUtils.saveJsonFileToInternalStorage(getContext(), MARKERS_FILE, jsonString);
+            JSONUtils.saveJsonFileToInternalStorage(requireContext(), MARKERS_FILE, jsonString);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -328,7 +335,7 @@ public class LocationFragment extends Fragment {
         ArrayList<MarkerMap> tabMarkers = new ArrayList<>();
         try {
 
-            File directory = new File(getContext().getFilesDir(), JSON_DIRECTORY);
+            File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
             File file = new File(directory, MARKERS_FILE);
             String jsonString = loadJSONFromFile(file.getAbsolutePath());
 
