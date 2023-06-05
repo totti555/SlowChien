@@ -187,7 +187,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void run() {
                 refreshData();
-                // Planifier le prochain rafraîchissement après l'intervalle défini
+                // delai 5 secondes
                 mHandler.postDelayed(this, REFRESH_INTERVAL);
             }
         }, REFRESH_INTERVAL);
