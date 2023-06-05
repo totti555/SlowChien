@@ -7,4 +7,10 @@
     <string name="title_settings">Settings</string>
     <string name="title_receive">reçu</string>
     <string name="title_sent">emis</string>
+    <string name="pr_nom">Prénom</string>
+    <string name="adresse">Adresse</string>
+    <string name="ajouter">Ajouter</string>
+    <string name="description">Description</string>
+    <string name="nom">Nom</string>
+    <string name="adresse_mac">Adresse MAC</string>
 </resources>
