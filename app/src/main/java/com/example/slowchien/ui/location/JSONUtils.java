@@ -2,6 +2,7 @@ package com.example.slowchien.ui.location;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.slowchien.ui.home.Message;
 
@@ -17,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -129,6 +131,33 @@ public class JSONUtils {
                 break;
             default:
                 break;
+        }
+    }
+
+    public static void saveJsonToFile(Context context, String jsonContent, String originalFileName) {
+        try {
+            // Obtention du répertoire de fichiers internes
+            File filesDir = context.getFilesDir();
+
+            // Création du nouveau nom de fichier
+            String newFileName = "new_" + originalFileName;
+            File newFile = new File(filesDir, newFileName);
+
+            // Création du flux de sortie
+            OutputStream outputStream = new FileOutputStream(newFile);
+
+            // Conversion du JSON en tableau de bytes
+            byte[] jsonBytes = jsonContent.getBytes();
+
+            // Écriture du contenu dans le fichier
+            outputStream.write(jsonBytes);
+            Toast.makeText(context, "Données envoyées avec succès !", Toast.LENGTH_SHORT).show();
+
+            // Fermeture du flux de sortie
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérer les exceptions ou afficher un message d'erreur
         }
     }
 
