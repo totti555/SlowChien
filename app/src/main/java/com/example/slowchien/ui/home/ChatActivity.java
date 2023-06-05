@@ -188,7 +188,6 @@ public class ChatActivity extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        System.out.println(currentDate);
         Message newMessage = new Message(selectedName, currentDate, currentDate, messageContent, myMacAddress, selectedMacAddress);
 
         JSONArray jsonArray = loadJSONArrayFromFile(filePath);

@@ -150,7 +150,6 @@ public class JSONUtils {
                 String destAddress = message.optString("macAddressDest", "");
 
                 if (srcAddress.equals(MY_MAC_ADDRESS) || destAddress.equals(MY_MAC_ADDRESS)) {
-                    System.out.println(message);
                     filteredMessages.put(message);
                 }
             }
@@ -184,7 +183,6 @@ public class JSONUtils {
                 String value = jsonObject.optString(filterKey, "");
 
                 if (value.equals(MY_MAC_ADDRESS)) {
-                    System.out.println(jsonObject);
                     filteredArray.put(jsonObject);
                 }
             }
@@ -259,7 +257,6 @@ public class JSONUtils {
                 if (srcAddress.equals(MY_MAC_ADDRESS)) {
                     // Vérifier si le message existe déjà dans le fichier chat.json
                     if (!containsMessage(filteredMessages, message)) {
-                        System.out.println(message);
                         filteredMessages.put(message);
                     }
                     // Vérifier si le message existe déjà dans le fichier sent.json
