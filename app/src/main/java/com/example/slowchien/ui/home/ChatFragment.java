@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import com.example.slowchien.MainActivity;
 import com.example.slowchien.R;
 import com.example.slowchien.ui.location.JSONUtils;
 import org.json.JSONArray;
@@ -29,7 +31,7 @@ public class ChatFragment extends Fragment {
 
     private ListView mListView;
     private List<JSONObject> filteredList;
-    static String myMacAddress = "FF-FF-FF-FF-FF-FF";
+    public static String myMacAddress = MainActivity.getMacAddr();
     private static final String JSON_DIRECTORY = "json";
     private static final String CHAT_FILE = "chat.json";
 
@@ -159,6 +161,7 @@ public class ChatFragment extends Fragment {
 
 
                 SimpleDateFormat inputFormat;
+                assert receivedDateStr != null;
                 if (receivedDateStr.contains("GMT") || sentDateStr.contains("GMT")) {
                     inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.ENGLISH);
                 } else if (sentDateStr.contains(":") || receivedDateStr.contains(":")) {
@@ -167,6 +170,7 @@ public class ChatFragment extends Fragment {
                     inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 }
                 Date receivedDate = inputFormat.parse(receivedDateStr);
+                assert sentDateStr != null;
                 Date sentDate = inputFormat.parse(sentDateStr);
                 messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
             }
