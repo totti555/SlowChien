@@ -1,99 +1,18 @@
 [
   {
-    "name": "Thomas",
-    "receivedDate": "2022-01-01",
-    "sentDate": "2022-01-01",
-    "content": "Message de Thomas. Je parle je parle, c'est pour faire plusieurs lignes et voir ce que ça donne au niveau de l'affichage",
-    "macAddressSrc": "00-B0-D0-63-C2-26",
+    "name": "User",
+    "receivedDate": "DATE DU JOUR EN FORMAT yyyy-mm-jj hh:mm",
+    "sentDate": "DATE DU JOUR EN FORMAT yyyy-mm-jj hh:mm",
+    "content": "Super ! Je suis sur Slowchien !",
+    "macAddressSrc": "METTRE LA VARIABLE MY_MAC_ADDRESS",
     "macAddressDest": "FF-FF-FF-FF-FF-FF"
   },
   {
-    "name": "Myriam",
-    "receivedDate": "2022-01-02",
-    "sentDate": "2022-01-01",
-    "content": "Message 2",
-    "macAddressDest": "1B-AE-12-63-45-CD",
-    "macAddressSrc": "10-10-FF-10-10-FF"
-  },
-  {
-    "name": "Thomas",
-    "receivedDate": "2022-01-03",
-    "sentDate": "2022-01-01",
-    "content": "Message 3",
-    "macAddressSrc": "00-B0-D0-63-C2-26",
-    "macAddressSrc": "AA-DC-CC-10-FF-10"
-  },
-  {
-    "name": "Nathan",
-    "receivedDate": "2022-01-03",
-    "sentDate": "2022-01-01",
-    "content": "Message 3",
-    "macAddressSrc": "FF-10-D0-12-C2-26",
-    "macAddressSrc": "AB-10-D0-12-C2-26"
-  },
-  {
-    "name": "Thomas",
-    "receivedDate": "2022-01-01",
-    "sentDate": "2022-01-01",
-    "content": "Ok, bien reçu",
-    "macAddressSrc": "00-B0-D0-63-C2-26",
-    "macAddressDest": "FF-FF-FF-FF-FF-FF"
-  },
-  {
-    "name": "Myriam",
-    "receivedDate": "2022-01-02",
-    "sentDate": "2022-01-01",
-    "content": "1er message",
-    "macAddressSrc": "1B-AE-12-63-45-CD",
-    "macAddressDest": "FF-FF-FF-FF-FF-FF"
-  },
-  {
-    "name": "Myriam",
-    "receivedDate": "2022-03-01",
-    "sentDate": "2022-03-01",
-    "content": "2eme message",
+    "name": "SlowChien",
+    "receivedDate": "DATE DU JOUR EN FORMAT yyyy-mm-jj hh:mm",
+    "sentDate": "DATE DU JOUR EN FORMAT yyyy-mm-jj hh:mm",
+    "content": "Bienvenue dans Slowchien !",
     "macAddressSrc": "FF-FF-FF-FF-FF-FF",
-    "macAddressDest": "1B-AE-12-63-45-CD"
-  },
-  {
-    "name": "Nathan",
-    "receivedDate": "2022-03-01",
-    "sentDate": "2022-03-01",
-    "content": "1er message",
-    "macAddressSrc": "AB-10-D0-12-C2-26",
-    "macAddressDest": "FF-FF-FF-FF-FF-FF"
-  },
-  {
-    "name": "Nathan",
-    "receivedDate": "2022-03-01",
-    "sentDate": "2022-03-01",
-    "content": "Yo bg",
-    "macAddressSrc": "FF-FF-FF-FF-FF-FF",
-    "macAddressDest": "AB-10-D0-12-C2-26"
-  },
-  {
-    "name": "Nathan",
-    "receivedDate": "2022-04-03",
-    "sentDate": "2022-05-04",
-    "content": "2eme message",
-    "macAddressSrc": "AB-10-D0-12-C2-26",
-    "macAddressDest": "FF-FF-FF-FF-FF-FF"
-  },
-
-  {
-    "name": "Myriam",
-    "receivedDate": "2023-04-02",
-    "sentDate": "2023-03-01",
-    "content": "Super merci !",
-    "macAddressSrc": "FF-FF-FF-FF-FF-FF",
-    "macAddressDest": "1B-AE-12-63-45-CD"
-  },
-  {
-    "name": "Myriam",
-    "receivedDate": "2022-04-01",
-    "sentDate": "2023-03-03",
-    "content": "Salut c'est Myriam, ça va ?",
-    "macAddressSrc": "1B-AE-12-63-45-CD",
-    "macAddressDest": "FF-FF-FF-FF-FF-FF"
+    "macAddressDest": "METTRE LA VARIABLE MY_MAC_ADDRESS"
   }
 ]

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.slowchien.MainActivity;
 import com.example.slowchien.ui.home.Message;
 
 import org.json.JSONArray;
@@ -36,7 +37,8 @@ public class JSONUtils {
     private static final String CHAT_FILE = "chat.json";
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
-    private static final String MY_MAC_ADDRESS = "FF-FF-FF-FF-FF-FF";
+    public static String MY_MAC_ADDRESS = MainActivity.getMacAddr();
+
 
 
 
@@ -166,10 +168,10 @@ public class JSONUtils {
             String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
             String filePath = jsonDirectoryPath + "/" + MESSAGES_FILE;
             String outputFilePath = jsonDirectoryPath + "/" + CHAT_FILE;
-
+            System.out.println(MY_MAC_ADDRESS);
             // Chargement JSON
             String content = loadJSONFromFile(filePath);
-
+            System.out.println(content);
             // Traitement JSON
             JSONArray messages = new JSONArray(content);
             JSONArray filteredMessages = new JSONArray();

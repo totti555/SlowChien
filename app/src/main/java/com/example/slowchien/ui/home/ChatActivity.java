@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
+import com.example.slowchien.MainActivity;
 import com.example.slowchien.R;
 import com.example.slowchien.ui.location.JSONUtils;
 
@@ -40,7 +41,7 @@ import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
 
-    String myMacAddress = "FF-FF-FF-FF-FF-FF";
+    String myMacAddress = MainActivity.getMacAddr();
     private EditText messageEditText;
     private ImageButton sendButton;
     private String selectedName;
