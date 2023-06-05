@@ -1,5 +1,6 @@
 package com.example.slowchien.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +62,20 @@ public class HomeFragment extends Fragment {
         //homeViewModel.getNewMessageBtnLib().observe(getViewLifecycleOwner(), textBtnNewMessage::setText);
 
         // Récupération de la référence au bouton de scan
-        //Button newMessageButton = (Button) view.findViewById(R.id.newMessage);
+        Button newMessageButton = (Button) view.findViewById(R.id.newMessageBtn);
+        newMessageButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                //Fragment fragment = new NewMessageFragment();
+                //fragment.setArguments(args);
+
+
+                Intent intent = new Intent(getActivity(), NewMessageActivity.class);
+                intent.putExtra("pageName", "Nouveau Message");
+
+                startActivity(intent);
+            }
+        });
 /*
         RelativeLayout.LayoutParams newMessageButtonRelativeLayout =
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
