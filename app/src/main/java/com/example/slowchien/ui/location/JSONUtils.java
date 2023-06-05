@@ -320,7 +320,8 @@ public class JSONUtils {
 
 
     }
-}
+
+
     private static boolean containsMessage(JSONArray jsonArray, JSONObject message) {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject storedMessage = jsonArray.optJSONObject(i);
