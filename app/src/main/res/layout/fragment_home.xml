@@ -29,7 +29,11 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button
+<<<<<<< HEAD
         android:id="@+id/newMessageBtn"
+=======
+        android:id="@+id/newMessage"
+>>>>>>> d354f79c9f9924f2fdbef1bd408053105516ee24
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+ nouveau message"

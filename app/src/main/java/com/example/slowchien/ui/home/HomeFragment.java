@@ -62,6 +62,7 @@ public class HomeFragment extends Fragment {
         //homeViewModel.getNewMessageBtnLib().observe(getViewLifecycleOwner(), textBtnNewMessage::setText);
 
         // Récupération de la référence au bouton de scan
+<<<<<<< HEAD
         Button newMessageButton = (Button) view.findViewById(R.id.newMessageBtn);
         newMessageButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -76,6 +77,9 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+=======
+        //Button newMessageButton = (Button) view.findViewById(R.id.newMessage);
+>>>>>>> d354f79c9f9924f2fdbef1bd408053105516ee24
 /*
         RelativeLayout.LayoutParams newMessageButtonRelativeLayout =
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
