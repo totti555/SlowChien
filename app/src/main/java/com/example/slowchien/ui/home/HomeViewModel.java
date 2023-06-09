@@ -17,7 +17,6 @@ public class HomeViewModel extends ViewModel {
 
     public HomeViewModel(ListView listView, String[] countryList) {
         mText = new MutableLiveData<>();
-        //mTextBtnNewMessage = new MutableLiveData<>();
         mListView = listView;
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(listView.getContext().getApplicationContext(), R.layout.activity_list_view, R.id.textView, countryList);
         mListView.setAdapter(arrayAdapter);
