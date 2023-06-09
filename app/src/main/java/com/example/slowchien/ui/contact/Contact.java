@@ -29,4 +29,14 @@ public class Contact {
     public String getMacAddress() {
         return macAddress;
     }
+
+    @Override
+    public String toString() {
+        return "Contact{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", description='" + description + '\'' +
+                ", macAddress='" + macAddress + '\'' +
+                '}';
+    }
 }

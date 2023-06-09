@@ -35,7 +35,7 @@ public class NewMessageActivity extends AppCompatActivity {
     private ContactAdapter adapter;
 
     private static final String JSON_DIRECTORY = "json";
-    private static final String SENT_FILE = "contacts.json";
+    private static final String CONTACTS_FILE = "contacts.json";
 
     public NewMessageActivity() {
         // Required empty public constructor
@@ -47,9 +47,8 @@ public class NewMessageActivity extends AppCompatActivity {
 
         try {
             File directory = new File(this.getFilesDir(), JSON_DIRECTORY);
-            File file = new File(directory, SENT_FILE);
+            File file = new File(directory, CONTACTS_FILE);
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
-
             JSONArray jsonArray = new JSONArray(jsonString);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);

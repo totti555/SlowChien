@@ -33,7 +33,7 @@ import java.util.Scanner;
 
 public class ContactFragment extends Fragment {
     private FragmentContactsBinding binding;
-    private static final String CONTACT_FILE = "contact.json";
+    private static final String CONTACT_FILE = "contacts.json";
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -44,7 +44,6 @@ public class ContactFragment extends Fragment {
         binding = FragmentContactsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        initJSONFile();
         final TextView textBtnBT = binding.ButtonAddContact;
         contactViewModel.getContactBtnLib().observe(getViewLifecycleOwner(), textBtnBT::setText);
 
@@ -95,20 +94,7 @@ public class ContactFragment extends Fragment {
     }
 
 
-    public void initJSONFile(){
 
-        try {
-            // Récupération du fichier JSON contenu dans le répertoire assets
-            InputStream inputStream = requireActivity().getAssets().open(CONTACT_FILE);
-            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
-
-            // Copie du fichier JSON dans le stockage interne depuis le fichier assets
-            JSONUtils.saveJsonFileToInternalStorage(getContext(), CONTACT_FILE, jsonString);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     public static List<JSONObject> getContactsFromJson(Context context, String fileName) {

@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
     private static final String JSON_DIRECTORY = "json";
-    private static final String CHAT_FILE = "chat.json";
+    private static final String CONTACT_FILE = "contacts.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Fonction pour clean tout le stockage interne (à décommenter si nécéssaire)
         // JSONUtils.cleanAllJSONFiles(getApplicationContext());
-
-        initJSONFile(MESSAGE_FILE);
+        initMessageJSONFile(MESSAGE_FILE);
+        initContactJSONFile(CONTACT_FILE);
         JSONUtils.créerChatJson(getApplicationContext());
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, SENT_FILE, "macAddressSrc");
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, RECEIVED_FILE, "macAddressDest");
@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return "AA:AA:AA:AA:AA:AA";
     }
-/*
-    public void initJSONFile(String file){
+
+    public void initContactJSONFile(String file){
 
         try {
             // Récupération du fichier JSON contenu dans le répertoire assets
@@ -103,8 +103,10 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-*/
-    public void initJSONFile(String file) {
+
+
+
+    public void initMessageJSONFile(String file) {
         try {
             // Création de l'objet JSON
             File directory = new File(getApplicationContext().getFilesDir(), JSON_DIRECTORY);
