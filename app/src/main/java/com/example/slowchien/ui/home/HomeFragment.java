@@ -107,10 +107,10 @@ public class HomeFragment extends Fragment {
 
         SentFragment sentFragment = new SentFragment();
         Bundle sentArgs = new Bundle();
-        sentArgs.putString("id", "Sent");
+        sentArgs.putString("id", "Envoyés");
         sentFragment.setArguments(sentArgs);
-        adapter.addFragment(new ReceiveFragment(), "Receive");
-        adapter.addFragment(new SentFragment(), "Sent");
+        adapter.addFragment(new ReceiveFragment(), "Reçus");
+        adapter.addFragment(new SentFragment(), "Envoyés");
         adapter.addFragment(new ChatFragment(), "Chat");
 
 

@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import com.example.slowchien.MainActivity;
 import com.example.slowchien.R;
 import com.example.slowchien.ui.location.JSONUtils;
 import org.json.JSONArray;
@@ -23,12 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class ChatFragment extends Fragment {
 
     private ListView mListView;
     private List<JSONObject> filteredList;
-    static String myMacAddress = "FF-FF-FF-FF-FF-FF";
+    public static String myMacAddress = MainActivity.getMacAddr();
     private static final String JSON_DIRECTORY = "json";
     private static final String CHAT_FILE = "chat.json";
 
@@ -62,7 +65,7 @@ public class ChatFragment extends Fragment {
         return new ArrayList<>(latestMessages.values());
     }
 
-    public static String getLatestMessageContent(String messagesJson, String macAddressSrc) {
+    public static String getLatestMessageContent(String messagesJson, String macAddressSrc, String stringParam) {
         try {
             JSONArray messagesArray = new JSONArray(messagesJson);
             List<JSONObject> filteredMessages = new ArrayList<>();
@@ -78,7 +81,6 @@ public class ChatFragment extends Fragment {
             }
 
             if (filteredMessages.size() > 0) {
-                // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 SimpleDateFormat dateFormat;
                 String dateStr = filteredMessages.get(0).getString("sentDate");
 
@@ -111,8 +113,15 @@ public class ChatFragment extends Fragment {
                         latestMessage = filteredMessages.get(i);
                     }
                 }
-
-                return latestMessage.getString("content");
+                if (Objects.equals(stringParam, "content")) {
+                    return latestMessage.getString("content");
+                }
+                else if (Objects.equals(stringParam, "sentDate")) {
+                    return latestMessage.getString("sentDate");
+                }
+                else {
+                    return latestMessage.getString("receivedDate");
+                }
             }
         } catch (JSONException | ParseException e) {
             e.printStackTrace();
@@ -143,15 +152,25 @@ public class ChatFragment extends Fragment {
             JSONArray jsonArray = new JSONArray(jsonString);
             filteredList = filterMessages(jsonArray);
             for (JSONObject jsonObject : filteredList) {
-                String receivedDateStr = jsonObject.getString("receivedDate");
-                String sentDateStr = jsonObject.getString("sentDate");
                 String name = jsonObject.getString("name");
                 String macAddressSrc = jsonObject.getString("macAddressSrc");
-                String content = getLatestMessageContent(jsonString,macAddressSrc);
+                String content = getLatestMessageContent(jsonString,macAddressSrc, "content");
+                String receivedDateStr = getLatestMessageContent(jsonString,macAddressSrc, "receivedDate");
+                String sentDateStr = getLatestMessageContent(jsonString,macAddressSrc, "sentDate");
                 String macAddressDest = jsonObject.getString("macAddressDest");
 
-                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+                SimpleDateFormat inputFormat;
+                assert receivedDateStr != null;
+                if (receivedDateStr.contains("GMT") || sentDateStr.contains("GMT")) {
+                    inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.ENGLISH);
+                } else if (sentDateStr.contains(":") || receivedDateStr.contains(":")) {
+                    inputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                } else {
+                    inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                }
                 Date receivedDate = inputFormat.parse(receivedDateStr);
+                assert sentDateStr != null;
                 Date sentDate = inputFormat.parse(sentDateStr);
                 messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
             }
@@ -168,7 +187,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void run() {
                 refreshData();
-                // Planifier le prochain rafraîchissement après l'intervalle défini
+                // delai 5 secondes
                 mHandler.postDelayed(this, REFRESH_INTERVAL);
             }
         }, REFRESH_INTERVAL);

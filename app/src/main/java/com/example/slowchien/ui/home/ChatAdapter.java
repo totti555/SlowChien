@@ -12,13 +12,14 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import com.example.slowchien.MainActivity;
 import com.example.slowchien.R;
 
 import java.util.List;
 
 public class ChatAdapter extends ArrayAdapter<Message> {
 
-    private String myMacAddress = "FF-FF-FF-FF-FF-FF";
+    public String myMacAddress = MainActivity.getMacAddr();
 
     public ChatAdapter(Context context, List<Message> messages) {
         super(context, 0, messages);
