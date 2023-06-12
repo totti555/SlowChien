@@ -1,11 +1,14 @@
 package com.example.slowchien.ui.contact;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
@@ -50,49 +53,55 @@ public class ContactFragment extends Fragment {
 
         Button mScanButton = root.findViewById(R.id.ButtonAddContact);
 
-        // Ajout d'un écouteur sur le bouton de scan
-            mScanButton.setOnClickListener(v -> {
-
-                // Créer une instance de PopupWindow
-                PopupWindow popupWindow = new PopupWindow(getActivity());
-                // Définir la focusabilité de la popup
-                popupWindow.setFocusable(true);
-                // Permettre à la popup de recevoir les événements tactiles en dehors de sa zone
-                popupWindow.setOutsideTouchable(false);
-                // Charger le contenu de la popup à partir du fichier XML
-                View popupView = getLayoutInflater().inflate(R.layout.fragement_contacts_popup_add, null);
-                popupWindow.setContentView(popupView);
-                // Définir la largeur et la hauteur de la popup
-                popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
-                popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-                // Afficher la popup au centre de l'écran
-                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
-
-                // Récupérer les références des champs de saisie dans la popup
-                EditText editTextMacAddress = popupView.findViewById(R.id.editTextMacAddress);
-                EditText editTextName = popupView.findViewById(R.id.editTextName);
-                EditText editTextAddress = popupView.findViewById(R.id.editTextAddress);
-                EditText editTextDescription = popupView.findViewById(R.id.editTextDescription);
-                Button buttonAddContact = popupView.findViewById(R.id.buttonAddContact);
-
-                // Écouter l'appui sur le bouton "Ajouter" dans la popup
-                buttonAddContact.setOnClickListener(buttonView -> {
-                    // Récupérer les valeurs saisies dans les champs
-                    String macAddress = editTextMacAddress.getText().toString();
-                    String name = editTextName.getText().toString();
-                    String address = editTextAddress.getText().toString();
-                    String description = editTextDescription.getText().toString();
-
-                    JSONUtils.ajouterValeurJSONContact(getContext(), CONTACT_FILE,macAddress, name,address,description);
-
-                    // Fermer la popup
-                    popupWindow.dismiss();
-                });
-            });
-
+        mScanButton.setOnClickListener(v -> showAddContactDialog());
 
         return root;
     }
+
+    private void showAddContactDialog() {
+        Dialog dialog = new Dialog(requireContext(), R.style.RoundDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(getLayoutInflater().inflate(R.layout.fragement_contacts_popup_add,null));
+
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int dialogWidth = (int) (width * 0.9); // 70% de la largeur de l'écran
+        int dialogHeight = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.width = dialogWidth;
+            params.height = dialogHeight;
+            window.setAttributes(params);
+            window.setGravity(Gravity.CENTER); // Aligner le dialogue au centre
+        }
+
+        // Ajouter du padding à gauche et à droite dans le contenu du dialogue
+        View dialogContent = dialog.findViewById(R.id.dialog_content);
+        int paddingStartEnd = (int) (width * 0.05); // 10% de la largeur de l'écran
+        dialogContent.setPadding(paddingStartEnd, paddingStartEnd, paddingStartEnd, paddingStartEnd);
+
+        EditText editTextMacAddress = dialog.findViewById(R.id.editTextMacAddress);
+        EditText editTextName = dialog.findViewById(R.id.editTextName);
+        EditText editTextAddress = dialog.findViewById(R.id.editTextAddress);
+        EditText editTextDescription = dialog.findViewById(R.id.editTextDescription);
+        Button buttonAddContact = dialog.findViewById(R.id.buttonAddContact);
+
+        buttonAddContact.setOnClickListener(buttonView -> {
+            String macAddress = editTextMacAddress.getText().toString();
+            String name = editTextName.getText().toString();
+            String address = editTextAddress.getText().toString();
+            String description = editTextDescription.getText().toString();
+
+            JSONUtils.ajouterValeurJSONContact(getContext(), CONTACT_FILE, macAddress, name, address, description);
+
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+
 
 
     public void initJSONFile(){
