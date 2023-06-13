@@ -209,12 +209,6 @@ public class JSONUtils {
             writer.write(cleanedArray.toString(4));
             writer.close();
 
-            // Supprimer le fichier après l'avoir nettoyé
-            File file = new File(filePath);
-            if (file.exists()) {
-                file.delete();
-            }
-
             Log.d(TAG, "Nettoyage terminé. Le fichier " + fileName + " a été nettoyé avec succès.");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
