@@ -2,7 +2,9 @@ package com.example.slowchien.ui.location;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.slowchien.MainActivity;
 import com.example.slowchien.ui.home.Message;
 
 import org.json.JSONArray;
@@ -17,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -34,7 +37,8 @@ public class JSONUtils {
     private static final String CHAT_FILE = "chat.json";
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
-    private static final String MY_MAC_ADDRESS = "FF-FF-FF-FF-FF-FF";
+    public static String MY_MAC_ADDRESS = MainActivity.getMacAddr();
+
 
 
 
@@ -132,15 +136,42 @@ public class JSONUtils {
         }
     }
 
+    public static void saveJsonToFile(Context context, String jsonContent, String originalFileName) {
+        try {
+            // Obtention du répertoire de fichiers internes
+            File filesDir = context.getFilesDir();
+
+            // Création du nouveau nom de fichier
+            String newFileName = "new_" + originalFileName;
+            File newFile = new File(filesDir, newFileName);
+
+            // Création du flux de sortie
+            OutputStream outputStream = new FileOutputStream(newFile);
+
+            // Conversion du JSON en tableau de bytes
+            byte[] jsonBytes = jsonContent.getBytes();
+
+            // Écriture du contenu dans le fichier
+            outputStream.write(jsonBytes);
+            Toast.makeText(context, "Données envoyées avec succès !", Toast.LENGTH_SHORT).show();
+
+            // Fermeture du flux de sortie
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérer les exceptions ou afficher un message d'erreur
+        }
+    }
+
     public static void créerChatJson(Context context) {
         try {
             String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
             String filePath = jsonDirectoryPath + "/" + MESSAGES_FILE;
             String outputFilePath = jsonDirectoryPath + "/" + CHAT_FILE;
-
+            System.out.println(MY_MAC_ADDRESS);
             // Chargement JSON
             String content = loadJSONFromFile(filePath);
-
+            System.out.println(content);
             // Traitement JSON
             JSONArray messages = new JSONArray(content);
             JSONArray filteredMessages = new JSONArray();
