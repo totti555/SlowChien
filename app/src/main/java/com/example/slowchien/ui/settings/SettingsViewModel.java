@@ -10,7 +10,7 @@ public class SettingsViewModel extends ViewModel {
     public SettingsViewModel() {
         mTextBtnClean = new MutableLiveData<>();
         mTextBtnClean.setValue("Supprimer les données");
-
+        //settings
 
     }
 
