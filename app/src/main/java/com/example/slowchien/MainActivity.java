@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
     private static final String JSON_DIRECTORY = "json";
+    private static final String CONTACTS_FILE = "contacts.json";
     private static final String CHAT_FILE = "chat.json";
     public static String MAC_ADDRESS="AA:AA:AA:AA:AA:AA";
 
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         // JSONUtils.cleanAllJSONFiles(getApplicationContext());
 
         initJSONFile(getApplicationContext(),MESSAGE_FILE,getMacAddr());
+        JSONUtils.initContactFile(getApplicationContext(),CONTACTS_FILE,getMacAddr());
         JSONUtils.créerChatJson(getApplicationContext());
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, SENT_FILE, "macAddressSrc");
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, RECEIVED_FILE, "macAddressDest");

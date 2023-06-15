@@ -37,6 +37,9 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         TextView macAddressView = convertView.findViewById(R.id.macAddressView);
         macAddressView.setText(contact.getMacAddress());
 
+        TextView descriptionView = convertView.findViewById(R.id.textView);
+        descriptionView.setText(contact.getDescription());
+
         ImageView icon = convertView.findViewById(R.id.mtrl_list_item_icon);
         icon.setImageResource(R.drawable.ic_baseline_person_24);
 
