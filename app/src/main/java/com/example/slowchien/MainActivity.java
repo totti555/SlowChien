@@ -1,8 +1,11 @@
 package com.example.slowchien;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.slowchien.ui.location.JSONUtils;
+import com.example.slowchien.ui.settings.SettingsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.crypto.Mac;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
@@ -34,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
     private static final String JSON_DIRECTORY = "json";
-    private static final String CONTACT_FILE = "contacts.json";
+    private static final String CHAT_FILE = "chat.json";
+    public static String MAC_ADDRESS="AA:AA:AA:AA:AA:AA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         // Fonction pour clean tout le stockage interne (à décommenter si nécéssaire)
-         JSONUtils.cleanAllJSONFiles(getApplicationContext());
-        initMessageJSONFile(MESSAGE_FILE);
-        initContactJSONFile(CONTACT_FILE);
+        // JSONUtils.cleanAllJSONFiles(getApplicationContext());
+
+        initJSONFile(getApplicationContext(),MESSAGE_FILE,getMacAddr());
         JSONUtils.créerChatJson(getApplicationContext());
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, SENT_FILE, "macAddressSrc");
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, RECEIVED_FILE, "macAddressDest");
@@ -65,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static String getMacAddr() {
+        if (MAC_ADDRESS!="AA:AA:AA:AA:AA:AA"){
+            return MAC_ADDRESS;
+        }
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface nif : all) {
@@ -89,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return "AA:AA:AA:AA:AA:AA";
     }
-
-    public void initContactJSONFile(String file){
+/*
+    public void initJSONFile(String file){
 
         try {
             // Récupération du fichier JSON contenu dans le répertoire assets
@@ -103,51 +112,44 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+*/
+public static void initJSONFile(Context context, String file,String MacAdrr) {
+    try {
+        // Création de l'objet JSON
+        File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
+        String filePath = directory + "/" + file;
 
+        JSONArray jsonArray = new JSONArray();
 
+        // Création du premier objet
+        JSONObject userObject = new JSONObject();
+        userObject.put("name", "SlowChien");
+        userObject.put("receivedDate", getCurrentDateTime());
+        userObject.put("sentDate", getCurrentDateTime());
+        userObject.put("content", "Super ! Je suis sur Slowchien !");
+        userObject.put("macAddressSrc", MacAdrr);
+        userObject.put("macAddressDest", "AB:CD:EF:AB:CD:EF");
 
-    public void initMessageJSONFile(String file) {
-        try {
-            // Création de l'objet JSON
-            File directory = new File(getApplicationContext().getFilesDir(), JSON_DIRECTORY);
-            String filePath = directory + "/" + file;
+        // Création du deuxième objet
+        JSONObject slowChienObject = new JSONObject();
+        slowChienObject.put("name", "SlowChien");
+        slowChienObject.put("receivedDate", getCurrentDateTime());
+        slowChienObject.put("sentDate", getCurrentDateTime());
+        slowChienObject.put("content", "Bienvenue dans Slowchien !");
+        slowChienObject.put("macAddressSrc", "AB:CD:EF:AB:CD:EF");
+        slowChienObject.put("macAddressDest", MacAdrr);
 
-                JSONArray jsonArray = new JSONArray();
+        jsonArray.put(slowChienObject);
+        jsonArray.put(userObject);
 
-                // Création du premier objet
-                JSONObject userObject = new JSONObject();
-                userObject.put("name", "SlowChien");
-                userObject.put("receivedDate", getCurrentDateTime());
-                userObject.put("sentDate", getCurrentDateTime());
-                userObject.put("content", "Super ! Je suis sur Slowchien !");
-                userObject.put("macAddressSrc", getMacAddr());
-                userObject.put("macAddressDest", "AB:CD:EF:AB:CD:EF");
-
-
-                // Création du deuxième objet
-                JSONObject slowChienObject = new JSONObject();
-                slowChienObject.put("name", "SlowChien");
-                slowChienObject.put("receivedDate", getCurrentDateTime());
-                slowChienObject.put("sentDate", getCurrentDateTime());
-                slowChienObject.put("content", "Bienvenue dans Slowchien !");
-                slowChienObject.put("macAddressSrc", "AB:CD:EF:AB:CD:EF");
-                slowChienObject.put("macAddressDest", getMacAddr());
-
-
-                jsonArray.put(slowChienObject);
-                jsonArray.put(userObject);
-
-                // Écriture du fichier JSON dans le stockage interne
-                String jsonString = jsonArray.toString();
-                JSONUtils.saveJsonFileToInternalStorage(getApplicationContext(), file, jsonString);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        // Écriture du fichier JSON dans le stockage interne
+        String jsonString = jsonArray.toString();
+        JSONUtils.saveJsonFileToInternalStorage(context, file, jsonString);
+    } catch (JSONException e) {
+        e.printStackTrace();
     }
-
-    private String getCurrentDateTime() {
+}
+    public static String getCurrentDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date now = new Date();
         return dateFormat.format(now);
