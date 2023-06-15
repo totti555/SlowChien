@@ -68,6 +68,13 @@
             android:label="@string/app_name">
 
         </activity>
+        <activity
+            android:name=".ui.home.NewMessageActivity"
+            android:parentActivityName=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+
+        </activity>
     </application>
 
 </manifest>

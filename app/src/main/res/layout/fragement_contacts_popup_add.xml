@@ -1,71 +1,98 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:background="@android:color/white">
+    android:orientation="vertical"
+    android:id="@+id/dialog_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Champs pour saisir les informations du contact -->
-    <EditText
-        android:id="@+id/editTextMacAddress"
-        android:name=".MainActivity"
-        android:windowSoftInputMode="stateVisible"
-        android:inputType="text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/adresse_mac"
-        android:autofillHints="username"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp" />
-
-    <EditText
-        android:id="@+id/editTextName"
-        android:name=".MainActivity"
-        android:windowSoftInputMode="stateVisible"
-        android:inputType="text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/nom"
-        android:autofillHints="name"
-        app:layout_constraintTop_toBottomOf="@id/editTextMacAddress"
-        android:layout_marginTop="8dp" />
-
-    <EditText
-        android:id="@+id/editTextAddress"
-        android:name=".MainActivity"
-        android:windowSoftInputMode="stateVisible"
-        android:inputType="text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/adresse"
-        android:autofillHints="postalAddress"
-        app:layout_constraintTop_toBottomOf="@id/editTextName"
-        android:layout_marginTop="8dp" />
-
-    <EditText
-        android:id="@+id/editTextDescription"
-        android:name=".MainActivity"
-        android:windowSoftInputMode="stateVisible"
-        android:inputType="text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/description"
-        app:layout_constraintTop_toBottomOf="@id/editTextAddress"
-        android:layout_marginTop="8dp" />
-
-    <!-- Bouton pour ajouter le contact -->
-    <Button
-        android:id="@+id/buttonAddContact"
+    <TextView
+        android:id="@+id/textTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ajouter"
-        app:layout_constraintTop_toBottomOf="@id/editTextDescription"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Ajouter contact"
+        android:textStyle="bold"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Champs pour saisir les informations du contact -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutMacAddress"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/adresse_mac">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextMacAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:autofillHints="username" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/nom">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:autofillHints="name" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutAddress"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/adresse">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:autofillHints="postalAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutDescription"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/description">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        >
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonAddContact"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ajouter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+           />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -1,8 +1,11 @@
 package com.example.slowchien;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.slowchien.ui.location.JSONUtils;
+import com.example.slowchien.ui.settings.SettingsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,9 +16,21 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.slowchien.databinding.ActivityMainBinding;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.NetworkInterface;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
+
+import javax.crypto.Mac;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String MESSAGE_FILE = "messages.json";
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
+    private static final String JSON_DIRECTORY = "json";
     private static final String CHAT_FILE = "chat.json";
+    public static String MAC_ADDRESS="AA:AA:AA:AA:AA:AA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +61,44 @@ public class MainActivity extends AppCompatActivity {
         // Fonction pour clean tout le stockage interne (à décommenter si nécéssaire)
         // JSONUtils.cleanAllJSONFiles(getApplicationContext());
 
-        initJSONFile(MESSAGE_FILE);
+        initJSONFile(getApplicationContext(),MESSAGE_FILE,getMacAddr());
         JSONUtils.créerChatJson(getApplicationContext());
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, SENT_FILE, "macAddressSrc");
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, RECEIVED_FILE, "macAddressDest");
 
-
+        String toto = getMacAddr();
+        System.out.println(toto);
     }
 
+    public static String getMacAddr() {
+        if (MAC_ADDRESS!="AA:AA:AA:AA:AA:AA"){
+            return MAC_ADDRESS;
+        }
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "AA:AA:AA:AA:AA:AA";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(String.format("%02X:",b));
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ignored) {
+        }
+        return "AA:AA:AA:AA:AA:AA";
+    }
+/*
     public void initJSONFile(String file){
 
         try {
@@ -64,5 +111,47 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+*/
+public static void initJSONFile(Context context, String file,String MacAdrr) {
+    try {
+        // Création de l'objet JSON
+        File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
+        String filePath = directory + "/" + file;
+
+        JSONArray jsonArray = new JSONArray();
+
+        // Création du premier objet
+        JSONObject userObject = new JSONObject();
+        userObject.put("name", "SlowChien");
+        userObject.put("receivedDate", getCurrentDateTime());
+        userObject.put("sentDate", getCurrentDateTime());
+        userObject.put("content", "Super ! Je suis sur Slowchien !");
+        userObject.put("macAddressSrc", MacAdrr);
+        userObject.put("macAddressDest", "AB:CD:EF:AB:CD:EF");
+
+        // Création du deuxième objet
+        JSONObject slowChienObject = new JSONObject();
+        slowChienObject.put("name", "SlowChien");
+        slowChienObject.put("receivedDate", getCurrentDateTime());
+        slowChienObject.put("sentDate", getCurrentDateTime());
+        slowChienObject.put("content", "Bienvenue dans Slowchien !");
+        slowChienObject.put("macAddressSrc", "AB:CD:EF:AB:CD:EF");
+        slowChienObject.put("macAddressDest", MacAdrr);
+
+        jsonArray.put(slowChienObject);
+        jsonArray.put(userObject);
+
+        // Écriture du fichier JSON dans le stockage interne
+        String jsonString = jsonArray.toString();
+        JSONUtils.saveJsonFileToInternalStorage(context, file, jsonString);
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+}
+    public static String getCurrentDateTime() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Date now = new Date();
+        return dateFormat.format(now);
     }
 }

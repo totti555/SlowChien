@@ -1,11 +1,15 @@
 package com.example.slowchien.ui.contact;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
@@ -18,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.slowchien.R;
 import com.example.slowchien.databinding.FragmentContactsBinding;
+import com.example.slowchien.ui.home.MessageAdapter;
 import com.example.slowchien.ui.location.JSONUtils;
 
 import org.json.JSONArray;
@@ -25,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,111 +39,134 @@ import java.util.Scanner;
 
 public class ContactFragment extends Fragment {
     private FragmentContactsBinding binding;
-    private static final String CONTACT_FILE = "contact.json";
+    private static final String JSON_DIRECTORY = "json";
+    private static final String CONTACTS_FILE = "contacts.json";
+
+    private Handler mHandler;
+    private static final long REFRESH_INTERVAL = 5000; // 5 secondes
+    private int lastVisibleItemPosition = 0;
+
+    private List<Contact> contactList;
+    private ContactAdapter contactAdapter;
+    private  ListView mListView;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ContactViewModel contactViewModel =
-                new ViewModelProvider(this).get(ContactViewModel.class);
-
-        binding = FragmentContactsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        initJSONFile();
-        final TextView textBtnBT = binding.ButtonAddContact;
-        contactViewModel.getContactBtnLib().observe(getViewLifecycleOwner(), textBtnBT::setText);
-
-        Button mScanButton = root.findViewById(R.id.ButtonAddContact);
-
-        // Ajout d'un écouteur sur le bouton de scan
-            mScanButton.setOnClickListener(v -> {
-
-                // Créer une instance de PopupWindow
-                PopupWindow popupWindow = new PopupWindow(getActivity());
-                // Définir la focusabilité de la popup
-                popupWindow.setFocusable(true);
-                // Permettre à la popup de recevoir les événements tactiles en dehors de sa zone
-                popupWindow.setOutsideTouchable(false);
-                // Charger le contenu de la popup à partir du fichier XML
-                View popupView = getLayoutInflater().inflate(R.layout.fragement_contacts_popup_add, null);
-                popupWindow.setContentView(popupView);
-                // Définir la largeur et la hauteur de la popup
-                popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
-                popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-                // Afficher la popup au centre de l'écran
-                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
-
-                // Récupérer les références des champs de saisie dans la popup
-                EditText editTextMacAddress = popupView.findViewById(R.id.editTextMacAddress);
-                EditText editTextName = popupView.findViewById(R.id.editTextName);
-                EditText editTextAddress = popupView.findViewById(R.id.editTextAddress);
-                EditText editTextDescription = popupView.findViewById(R.id.editTextDescription);
-                Button buttonAddContact = popupView.findViewById(R.id.buttonAddContact);
-
-                // Écouter l'appui sur le bouton "Ajouter" dans la popup
-                buttonAddContact.setOnClickListener(buttonView -> {
-                    // Récupérer les valeurs saisies dans les champs
-                    String macAddress = editTextMacAddress.getText().toString();
-                    String name = editTextName.getText().toString();
-                    String address = editTextAddress.getText().toString();
-                    String description = editTextDescription.getText().toString();
-
-                    JSONUtils.ajouterValeurJSONContact(getContext(), CONTACT_FILE,macAddress, name,address,description);
-
-                    // Fermer la popup
-                    popupWindow.dismiss();
-                });
-            });
 
 
-        return root;
+
+        //binding = FragmentContactsBinding.inflate(inflater, container, false);
+        // View root = binding.getRoot();
+
+
+        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
+        Button mScanButton = view.findViewById(R.id.ButtonAddContact);
+        mListView = view.findViewById(R.id.simpleListView);
+        loadContactsFromJson();
+        mListView.setAdapter(contactAdapter);
+
+        mScanButton.setOnClickListener(v -> showAddContactDialog());
+
+        mHandler = new Handler();
+        startRefreshing();
+        return view;
     }
 
+    private void showAddContactDialog() {
+        Dialog dialog = new Dialog(requireContext(), R.style.RoundDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(getLayoutInflater().inflate(R.layout.fragement_contacts_popup_add,null));
 
-    public void initJSONFile(){
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int dialogWidth = (int) (width * 0.9); // 70% de la largeur de l'écran
+        int dialogHeight = WindowManager.LayoutParams.WRAP_CONTENT;
 
-        try {
-            // Récupération du fichier JSON contenu dans le répertoire assets
-            InputStream inputStream = requireActivity().getAssets().open(CONTACT_FILE);
-            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
-
-            // Copie du fichier JSON dans le stockage interne depuis le fichier assets
-            JSONUtils.saveJsonFileToInternalStorage(getContext(), CONTACT_FILE, jsonString);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.width = dialogWidth;
+            params.height = dialogHeight;
+            window.setAttributes(params);
+            window.setGravity(Gravity.CENTER); // Aligner le dialogue au centre
         }
+
+        // Ajouter du padding à gauche et à droite dans le contenu du dialogue
+        View dialogContent = dialog.findViewById(R.id.dialog_content);
+        int paddingStartEnd = (int) (width * 0.05); // 10% de la largeur de l'écran
+        dialogContent.setPadding(paddingStartEnd, paddingStartEnd, paddingStartEnd, paddingStartEnd);
+
+        EditText editTextMacAddress = dialog.findViewById(R.id.editTextMacAddress);
+        EditText editTextName = dialog.findViewById(R.id.editTextName);
+        EditText editTextAddress = dialog.findViewById(R.id.editTextAddress);
+        EditText editTextDescription = dialog.findViewById(R.id.editTextDescription);
+        Button buttonAddContact = dialog.findViewById(R.id.buttonAddContact);
+
+        buttonAddContact.setOnClickListener(buttonView -> {
+            String macAddress = editTextMacAddress.getText().toString();
+            String name = editTextName.getText().toString();
+            String address = editTextAddress.getText().toString();
+            String description = editTextDescription.getText().toString();
+
+            JSONUtils.ajouterValeurJSONContact(getContext(), CONTACTS_FILE, macAddress, name, address, description);
+
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
 
-    public static List<JSONObject> getContactsFromJson(Context context, String fileName) {
-        List<JSONObject> contactList = new ArrayList<>();
+    public void loadContactsFromJson() {
+        contactList = new ArrayList<>();
 
         try {
-            InputStream inputStream = context.getAssets().open(fileName);
-            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
+            File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
+            File file = new File(directory, CONTACTS_FILE);
 
+            String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
             JSONArray jsonArray = new JSONArray(jsonString);
-
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                contactList.add(jsonObject);
+                System.out.println(jsonObject.toString());
+                String name = jsonObject.getString("name");
+                String address = jsonObject.getString("address");
+                String description = jsonObject.getString("description");
+                String macAddress = jsonObject.getString("macAddress");
+                contactList.add(new Contact(name,address,description,macAddress));
             }
+            contactAdapter = new ContactAdapter(getActivity(), contactList, "Sent");
 
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return contactList;
     }
 
+    private void startRefreshing() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshData();
+                // Planifier le prochain rafraîchissement après l'intervalle défini
+                mHandler.postDelayed(this, REFRESH_INTERVAL);
+            }
+        }, REFRESH_INTERVAL);
+    }
 
+    private void refreshData() {
+        // Scroll position and reload
+        lastVisibleItemPosition = mListView.getFirstVisiblePosition();
+        loadContactsFromJson();
+        mListView.setAdapter(contactAdapter);
+        mListView.setSelection(lastVisibleItemPosition);
+    }
 
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mHandler.removeCallbacksAndMessages(null);
         binding = null;
     }
 
