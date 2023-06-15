@@ -155,7 +155,6 @@ public class ExchangeFragment extends Fragment {
             }
         });
 
-        // return root
         return root;
     }
 

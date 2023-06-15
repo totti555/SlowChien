@@ -1,8 +1,6 @@
 package com.example.slowchien.ui.home;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -23,13 +19,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.slowchien.MainActivity;
 import com.example.slowchien.R;
 import com.example.slowchien.databinding.FragmentHomeBinding;
-import com.example.slowchien.ui.exchange.ExchangeViewModel;
 import com.example.slowchien.ui.location.JSONUtils;
 import com.google.android.material.tabs.TabLayout;
 
@@ -42,9 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -98,23 +90,21 @@ public class HomeFragment extends Fragment {
         // Récupération de la référence au bouton de scan
 
         Button newMessageButton = (Button) view.findViewById(R.id.newMessageBtn);
-        newMessageButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        newMessageButton.setOnClickListener(v -> {
 
-                //Fragment fragment = new NewMessageFragment();
-                //fragment.setArguments(args);
+            //Fragment fragment = new NewMessageFragment();
+            //fragment.setArguments(args);
 
-/*
-                Intent intent = new Intent(getActivity(), NewMessageActivity.class);
-                intent.putExtra("pageName", "Nouveau Message");
+            /*
+            Intent intent = new Intent(getActivity(), NewMessageActivity.class);
+            intent.putExtra("pageName", "Nouveau Message");
 
-                startActivity(intent);
-                */
-                try {
-                    showAddContactDialog();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            startActivity(intent);
+            */
+            try {
+                showAddContactDialog();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         });
 /*
