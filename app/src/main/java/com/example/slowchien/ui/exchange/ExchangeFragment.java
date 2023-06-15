@@ -33,12 +33,10 @@ import com.example.slowchien.databinding.FragmentExchangeBinding;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.NetworkInterface;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -49,6 +47,7 @@ public class ExchangeFragment extends Fragment {
     private BroadcastReceiver receiver;
 
     public Button mScanButton;
+    public Button mPairedDevicesButton;
     public Button mVisibilityButton;
     public Button mDisconnectButton;
     public Button mSendingButton;
@@ -61,7 +60,10 @@ public class ExchangeFragment extends Fragment {
     private ArrayList<String> mDeviceNames;
     private ArrayList<BluetoothDevice> mDevices;
     private ArrayAdapter<String> mAdapter;
-    private AlertDialog mAlertDialog;
+    private AlertDialog mScanAlertDialog;
+
+    private ArrayList<BluetoothDevice> mPairedDevices;
+    private AlertDialog mPairedAlertDialog;
 
 
     public BluetoothDevice selectedDevice = null;
@@ -90,6 +92,10 @@ public class ExchangeFragment extends Fragment {
         final TextView textBtnBT = binding.findBluetoothPeriph;
         exchangeViewModel.getBluetoothBtnLib().observe(getViewLifecycleOwner(), textBtnBT::setText);
 
+        // Initialisation du bouton de listing des périphériques appairés
+        final TextView textBtnPairedDevices = binding.getPairedBluetoothPeriph;
+        exchangeViewModel.getPairedDevicesBtnLib().observe(getViewLifecycleOwner(), textBtnPairedDevices::setText);
+
         // Initialisation du bouton de détection du téléphone
         final TextView textBtnVisi = binding.setDeviceVisibility;
         exchangeViewModel.getVisibilityBtnLib().observe(getViewLifecycleOwner(), textBtnVisi::setText);
@@ -103,10 +109,16 @@ public class ExchangeFragment extends Fragment {
         exchangeViewModel.getSendingBtnLib().observe(getViewLifecycleOwner(), textBtnSend::setText);
 
         // Configuration du popup listant les périphériques trouvés
-        setupAlertDialog();
+        setupAlertDialogScan();
+
+        // Configuration du popup listant les périphériques appairés
+        setupAlertDialogPaired();
 
         // Initialisation du bouton de recherche de périphériques
         mScanButton = root.findViewById(R.id.findBluetoothPeriph);
+
+        // Initialisation du bouton de listing des périphériques appairés
+        mPairedDevicesButton = root.findViewById(R.id.getPairedBluetoothPeriph);
 
         // Initialisation du bouton de détection du téléphone
         mVisibilityButton = root.findViewById(R.id.setDeviceVisibility);
@@ -122,6 +134,9 @@ public class ExchangeFragment extends Fragment {
 
         // Configuration de l'action du bouton de scan
         mScanButton.setOnClickListener(v -> checkScanPermissions());
+
+        // Configuration de l'action du bouton de listing
+        mPairedDevicesButton.setOnClickListener(v -> displayPairedDevicesList());
 
         // Configuration de l'action du bouton de visibilitié
         mVisibilityButton.setOnClickListener(v -> checkVisibilityPermissions());
@@ -284,8 +299,22 @@ public class ExchangeFragment extends Fragment {
             }
             // Lancement de la recherche de périphériques Bluetooth
             Toast.makeText(getActivity(), "Scan en cours...", Toast.LENGTH_SHORT).show();
-            mAlertDialog.show();
+            mScanAlertDialog.show();
             bluetoothAdapter.startDiscovery();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void displayPairedDevicesList() {
+
+        // Vérification de la config Bluetooth
+        if (bluetoothAdapter != null) {
+            // Vérification de l'état de la recherche
+            if (bluetoothAdapter.isDiscovering()) {
+                bluetoothAdapter.cancelDiscovery();
+            }
+            // Affichage de la liste des périphériques Bluetooth déjà appairés à l'appareil
+            mPairedAlertDialog.show();
         }
     }
 
@@ -309,7 +338,7 @@ public class ExchangeFragment extends Fragment {
     }
 
     @SuppressLint("MissingPermission")
-    private void setupAlertDialog(){
+    private void setupAlertDialogScan(){
 
         mDeviceNames = new ArrayList<>();
         mDevices = new ArrayList<>();
@@ -324,6 +353,8 @@ public class ExchangeFragment extends Fragment {
             // Connexion au périphérique sélectionné
             BluetoothDevice device = mDevices.get(which);
             if(device.getName() != null){
+                // on enregistre le périphérique souhaité
+                selectedDevice = device;
                 // Si le périphérique n'est pas déjà appairé
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                     selectedDevice = device;
@@ -331,15 +362,78 @@ public class ExchangeFragment extends Fragment {
                     selectedDevice.createBond();
 
                     bluetoothService = new BluetoothService(requireContext(), bluetoothAdapter);
-                } else {
-                    Toast.makeText(this.getContext(), "Périphérique déjà connecté !", Toast.LENGTH_SHORT).show();
+                }
+                // Si le périphérique est déjà appairé, pas besoin de créer la liaison
+                else {
+                    selectedDevice = device;
+
+                    bluetoothService = new BluetoothService(requireContext(), bluetoothAdapter);
+
+                    bluetoothService.startClient(selectedDevice,UUID_BT);
                 }
             } else {
                 // Si pas assez d'infos sur le périphérique ciblé
                 Toast.makeText(this.getContext(), "Connexion impossible - Périphérique inconnu !", Toast.LENGTH_SHORT).show();
             }
         });
-        mAlertDialog = builder.create();
+        mScanAlertDialog = builder.create();
+    }
+
+    @SuppressLint("MissingPermission")
+    private void setupAlertDialogPaired(){
+
+        ArrayList<String> mPairedDevicesNames = new ArrayList<>();
+        mPairedDevices = new ArrayList<>();
+
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+        // Parcourir les périphériques appairés
+        for (BluetoothDevice device : pairedDevices) {
+            BluetoothClass deviceClass = device.getBluetoothClass();
+
+            // Vérifier si le périphérique est un téléphone mobile
+            if (deviceClass != null && deviceClass.getMajorDeviceClass() == BluetoothClass.Device.Major.PHONE) {
+
+                String deviceName = device.getName(); // Nom du périphérique
+                String deviceHardwareAddress = device.getAddress(); // Adresse MAC du périphérique
+
+                // Gestion de l'affichage dans le builder AlertDialog
+                if(deviceName == null){
+                    deviceName = "❔ Inconnu";
+                } else {
+                    deviceName = "📲 " + device.getName();
+                }
+                String deviceInfo = deviceName + "\n📌 " + deviceHardwareAddress;
+
+                mPairedDevicesNames.add(deviceInfo);
+                mPairedDevices.add(device);
+            }
+        }
+
+        ArrayAdapter<String> mPairedAdapter = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_list_item_1, mPairedDevicesNames);
+
+        // Configuration du popup listant les périphériques détecté
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setTitle("Appareils appairés");
+        builder.setAdapter(mPairedAdapter, null);
+        builder.setPositiveButton("Fermer", null);
+        builder.setAdapter(mPairedAdapter, (dialog, which) -> {
+            // Connexion au périphérique sélectionné
+            BluetoothDevice device = mPairedDevices.get(which);
+            if(device.getName() != null){
+
+                selectedDevice = device;
+
+                bluetoothService = new BluetoothService(requireContext(), bluetoothAdapter);
+
+                bluetoothService.startClient(selectedDevice,UUID_BT);
+
+            } else {
+                // Si pas assez d'infos sur le périphérique ciblé
+                Toast.makeText(this.getContext(), "Connexion impossible - Périphérique inconnu !", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mPairedAlertDialog = builder.create();
     }
 
     @SuppressLint("MissingPermission")
@@ -361,6 +455,7 @@ public class ExchangeFragment extends Fragment {
                     // Une fois la connexion rompue
                     // Affichage des boutons de scan et de visibilité du téléphone
                     mScanButton.setVisibility(View.VISIBLE);
+                    mPairedDevicesButton.setVisibility(View.VISIBLE);
                     mVisibilityButton.setVisibility(View.VISIBLE);
 
                     // Disparition des boutons de déconnexion et d'envoi de fichier
@@ -458,6 +553,7 @@ public class ExchangeFragment extends Fragment {
                                 // Une fois la connexion établie
                                 // Disparition des boutons de scan et de visibilité du téléphone
                                 mScanButton.setVisibility(View.GONE);
+                                mPairedDevicesButton.setVisibility(View.GONE);
                                 mVisibilityButton.setVisibility(View.GONE);
 
                                 // Affichage des boutons de déconnexion et d'envoi de fichier

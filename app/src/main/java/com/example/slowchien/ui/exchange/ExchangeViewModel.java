@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 public class ExchangeViewModel extends ViewModel {
     private final MutableLiveData<String> mTextBtnBT;
+    private final MutableLiveData<String> mTextBtnPairedDevices;
     private final MutableLiveData<String> mTextBtnVisibility;
     private final MutableLiveData<String> mTextBtnDisconnect;
     private final MutableLiveData<String> mTextBtnSending;
@@ -14,6 +15,9 @@ public class ExchangeViewModel extends ViewModel {
 
         mTextBtnBT = new MutableLiveData<>();
         mTextBtnBT.setValue("📡 Scan Bluetooth");
+
+        mTextBtnPairedDevices = new MutableLiveData<>();
+        mTextBtnPairedDevices.setValue("📳 Périphériques appairés");
 
         mTextBtnVisibility = new MutableLiveData<>();
         mTextBtnVisibility.setValue("👁 Se rendre visible");
@@ -26,6 +30,8 @@ public class ExchangeViewModel extends ViewModel {
     }
 
     public LiveData<String> getBluetoothBtnLib() { return mTextBtnBT; }
+
+    public LiveData<String> getPairedDevicesBtnLib() { return mTextBtnPairedDevices; }
 
     public LiveData<String> getVisibilityBtnLib() { return mTextBtnVisibility; }
 
