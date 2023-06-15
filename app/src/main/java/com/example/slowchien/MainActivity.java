@@ -1,7 +1,9 @@
 package com.example.slowchien;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 
 import com.example.slowchien.ui.location.JSONUtils;
@@ -40,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String RECEIVED_FILE = "received.json";
     private static final String JSON_DIRECTORY = "json";
     private static final String CHAT_FILE = "chat.json";
-    public static String MAC_ADDRESS="AA:AA:AA:AA:AA:AA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +59,23 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+
+
         // Fonction pour clean tout le stockage interne (à décommenter si nécéssaire)
         // JSONUtils.cleanAllJSONFiles(getApplicationContext());
 
-        initJSONFile(getApplicationContext(),MESSAGE_FILE,getMacAddr());
+        initJSONFile(getApplicationContext(),MESSAGE_FILE,getMacAddr(getApplicationContext()));
         JSONUtils.créerChatJson(getApplicationContext());
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, SENT_FILE, "macAddressSrc");
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, RECEIVED_FILE, "macAddressDest");
 
-        String toto = getMacAddr();
+        String toto = getMacAddr(getApplicationContext());
         System.out.println(toto);
     }
 
-    public static String getMacAddr() {
-        if (MAC_ADDRESS!="AA:AA:AA:AA:AA:AA"){
-            return MAC_ADDRESS;
+    public static String getMacAddr(Context context) {
+        if (getMacAddressSaved(context)!="AA:AA:AA:AA:AA:AA"){
+            return getMacAddressSaved(context);
         }
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
@@ -81,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
                 byte[] macBytes = nif.getHardwareAddress();
                 if (macBytes == null) {
+                    saveMacAddress(context,"AA:AA:AA:AA:AA:AA");
                     return "AA:AA:AA:AA:AA:AA";
                 }
 
@@ -92,10 +96,12 @@ public class MainActivity extends AppCompatActivity {
                 if (res1.length() > 0) {
                     res1.deleteCharAt(res1.length() - 1);
                 }
+                saveMacAddress(context,res1.toString());
                 return res1.toString();
             }
         } catch (Exception ignored) {
         }
+        saveMacAddress(context,"AA:AA:AA:AA:AA:AA");
         return "AA:AA:AA:AA:AA:AA";
     }
 /*
@@ -149,6 +155,25 @@ public static void initJSONFile(Context context, String file,String MacAdrr) {
         e.printStackTrace();
     }
 }
+
+    public static void saveMacAddress(Context context, String macAddress) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("MAC_ADDRESS", macAddress);
+        editor.apply();
+    }
+
+
+    public static String getMacAddressSaved(Context context) {
+        // Obtention de l'objet SharedPreferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        // Récupération de la valeur de MAC_ADDRESS
+        return sharedPreferences.getString("MAC_ADDRESS", "AA:AA:AA:AA:AA:AA");
+    }
+
+
+
     public static String getCurrentDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date now = new Date();
