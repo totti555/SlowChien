@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.location.LocationFragment">
 <!--commentt-->
+    <!--
     <TextView
         android:id="@+id/text_contacts"
         android:layout_width="match_parent"
@@ -20,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
+-->
     <Button
         android:id="@+id/ButtonAddContact"
         android:layout_width="match_parent"
@@ -31,9 +32,14 @@
         android:textSize="20sp"
         tools:ignore="MissingConstraints" />
 
+
     <ListView
-        android:id="@+id/listViewContacts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:id="@+id/simpleListView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="@color/material_blue_grey_800"
+        android:dividerHeight="1dp"
+        android:paddingBottom="56dp"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

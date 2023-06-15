@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.slowchien.R;
 import com.example.slowchien.databinding.FragmentContactsBinding;
+import com.example.slowchien.ui.home.MessageAdapter;
 import com.example.slowchien.ui.location.JSONUtils;
 
 import org.json.JSONArray;
@@ -25,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,13 +35,18 @@ import java.util.Scanner;
 
 public class ContactFragment extends Fragment {
     private FragmentContactsBinding binding;
-    private static final String CONTACT_FILE = "contacts.json";
+    private static final String JSON_DIRECTORY = "json";
+    private static final String CONTACTS_FILE = "contacts.json";
 
+    private List<Contact> contactList;
+    private ContactAdapter contactAdapter;
+    private  ListView mListView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         ContactViewModel contactViewModel =
                 new ViewModelProvider(this).get(ContactViewModel.class);
+
 
         binding = FragmentContactsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -48,6 +55,12 @@ public class ContactFragment extends Fragment {
         contactViewModel.getContactBtnLib().observe(getViewLifecycleOwner(), textBtnBT::setText);
 
         Button mScanButton = root.findViewById(R.id.ButtonAddContact);
+
+
+        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
+        mListView = view.findViewById(R.id.simpleListView);
+        loadContactsFromJson();
+        mListView.setAdapter(contactAdapter);
 
         // Ajout d'un écouteur sur le bouton de scan
             mScanButton.setOnClickListener(v -> {
@@ -82,7 +95,7 @@ public class ContactFragment extends Fragment {
                     String address = editTextAddress.getText().toString();
                     String description = editTextDescription.getText().toString();
 
-                    JSONUtils.ajouterValeurJSONContact(getContext(), CONTACT_FILE,macAddress, name,address,description);
+                    JSONUtils.ajouterValeurJSONContact(getContext(), CONTACTS_FILE,macAddress, name,address,description);
 
                     // Fermer la popup
                     popupWindow.dismiss();
@@ -97,25 +110,38 @@ public class ContactFragment extends Fragment {
 
 
 
-    public static List<JSONObject> getContactsFromJson(Context context, String fileName) {
-        List<JSONObject> contactList = new ArrayList<>();
+    public void loadContactsFromJson() {
+        List<Contact> contactList = new ArrayList<>();
 
         try {
-            InputStream inputStream = context.getAssets().open(fileName);
-            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
-
+            File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
+            File file = new File(directory, CONTACTS_FILE);
+            String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
             JSONArray jsonArray = new JSONArray(jsonString);
-
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                contactList.add(jsonObject);
+                System.out.println(jsonObject.toString());
+                String name = jsonObject.getString("name");
+                String address = jsonObject.getString("address");
+                String description = jsonObject.getString("description");
+                String macAddress = jsonObject.getString("macAddress");
+                contactList.add(new Contact(name,address,description,macAddress));
             }
+            //contactAdapter = new ContactAdapter(getActivity(), contactList, "Contacts");
+            if (contactAdapter == null) {
+                contactAdapter = new ContactAdapter(getActivity(), contactList, "Contacts");
+            } else {
+                contactAdapter.notifyDataSetChanged();
+            }
+            mListView.setAdapter(contactAdapter);
 
-        } catch (IOException | JSONException e) {
+        } catch ( JSONException e) {
             e.printStackTrace();
         }
 
-        return contactList;
+        this.contactList = contactList;
+        System.out.println("test " );
+        System.out.println(contactList);
     }
 
 

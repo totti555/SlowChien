@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         // Fonction pour clean tout le stockage interne (à décommenter si nécéssaire)
-        // JSONUtils.cleanAllJSONFiles(getApplicationContext());
+         JSONUtils.cleanAllJSONFiles(getApplicationContext());
         initMessageJSONFile(MESSAGE_FILE);
         initContactJSONFile(CONTACT_FILE);
         JSONUtils.créerChatJson(getApplicationContext());
