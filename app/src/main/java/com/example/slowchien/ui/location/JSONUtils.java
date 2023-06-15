@@ -37,7 +37,7 @@ public class JSONUtils {
     private static final String JSON_DIRECTORY = "json";
     private static final String MARKERS_FILE = "markers.json";
     private static final String MESSAGES_FILE = "messages.json";
-    private static final String CONTACT_FILE = "contact.json";
+    private static final String CONTACT_FILE = "contacts.json";
     private static final String CHAT_FILE = "chat.json";
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";

@@ -3,6 +3,7 @@ package com.example.slowchien.ui.contact;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,33 +42,35 @@ public class ContactFragment extends Fragment {
     private static final String JSON_DIRECTORY = "json";
     private static final String CONTACTS_FILE = "contacts.json";
 
+    private Handler mHandler;
+    private static final long REFRESH_INTERVAL = 5000; // 5 secondes
+    private int lastVisibleItemPosition = 0;
+
     private List<Contact> contactList;
     private ContactAdapter contactAdapter;
     private  ListView mListView;
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ContactViewModel contactViewModel =
-                new ViewModelProvider(this).get(ContactViewModel.class);
 
 
-        binding = FragmentContactsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
-        final TextView textBtnBT = binding.ButtonAddContact;
-        contactViewModel.getContactBtnLib().observe(getViewLifecycleOwner(), textBtnBT::setText);
+        //binding = FragmentContactsBinding.inflate(inflater, container, false);
+        // View root = binding.getRoot();
 
-        Button mScanButton = root.findViewById(R.id.ButtonAddContact);
 
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
+        Button mScanButton = view.findViewById(R.id.ButtonAddContact);
         mListView = view.findViewById(R.id.simpleListView);
         loadContactsFromJson();
         mListView.setAdapter(contactAdapter);
 
         mScanButton.setOnClickListener(v -> showAddContactDialog());
 
-
-        return root;
+        mHandler = new Handler();
+        startRefreshing();
+        return view;
     }
 
     private void showAddContactDialog() {
@@ -114,17 +117,13 @@ public class ContactFragment extends Fragment {
     }
 
 
-
-
-
-
-
     public void loadContactsFromJson() {
-        List<Contact> contactList = new ArrayList<>();
+        contactList = new ArrayList<>();
 
         try {
             File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
             File file = new File(directory, CONTACTS_FILE);
+
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
             JSONArray jsonArray = new JSONArray(jsonString);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -136,29 +135,38 @@ public class ContactFragment extends Fragment {
                 String macAddress = jsonObject.getString("macAddress");
                 contactList.add(new Contact(name,address,description,macAddress));
             }
-            //contactAdapter = new ContactAdapter(getActivity(), contactList, "Contacts");
-            if (contactAdapter == null) {
-                contactAdapter = new ContactAdapter(getActivity(), contactList, "Contacts");
-            } else {
-                contactAdapter.notifyDataSetChanged();
-            }
-            mListView.setAdapter(contactAdapter);
+            contactAdapter = new ContactAdapter(getActivity(), contactList, "Sent");
 
-        } catch ( JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        this.contactList = contactList;
-        System.out.println("test " );
-        System.out.println(contactList);
     }
 
+    private void startRefreshing() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshData();
+                // Planifier le prochain rafraîchissement après l'intervalle défini
+                mHandler.postDelayed(this, REFRESH_INTERVAL);
+            }
+        }, REFRESH_INTERVAL);
+    }
 
+    private void refreshData() {
+        // Scroll position and reload
+        lastVisibleItemPosition = mListView.getFirstVisiblePosition();
+        loadContactsFromJson();
+        mListView.setAdapter(contactAdapter);
+        mListView.setSelection(lastVisibleItemPosition);
+    }
 
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mHandler.removeCallbacksAndMessages(null);
         binding = null;
     }
 
