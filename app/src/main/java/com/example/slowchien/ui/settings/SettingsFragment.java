@@ -193,7 +193,7 @@ public class SettingsFragment extends Fragment {
             // Faites quelque chose avec l'adresse MAC saisie
             MainActivity.MAC_ADDRESS=macAddress;
             textMacAdress.setText("Adresse MAC :"+ MainActivity.getMacAddr());
-
+            //todo, parcourir les json et remplacer l'ancienne adresse par la nouvelle
             dialog.dismiss();
         });
         buttonLayout.addView(validateButton);
