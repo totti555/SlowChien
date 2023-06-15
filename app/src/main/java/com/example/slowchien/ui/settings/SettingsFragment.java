@@ -55,7 +55,7 @@ public class SettingsFragment extends Fragment {
         // Ajout d'un écouteur sur le bouton de scan
         // Utilisation dans la méthode onCreateView()
         mScanButton.setOnClickListener(v -> showConfirmationPopup(v));
-        mScanButton2.setOnClickListener(v -> changeMacAddress(v,textMacAdress));
+        //mScanButton2.setOnClickListener(v -> changeMacAddress(v,textMacAdress));
         return root;
     }
 
