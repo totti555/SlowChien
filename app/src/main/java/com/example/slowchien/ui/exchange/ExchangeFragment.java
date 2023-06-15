@@ -433,6 +433,7 @@ public class ExchangeFragment extends Fragment {
                 Toast.makeText(this.getContext(), "Connexion impossible - Périphérique inconnu !", Toast.LENGTH_SHORT).show();
             }
         });
+
         mPairedAlertDialog = builder.create();
     }
 
