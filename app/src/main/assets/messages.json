@@ -1,30 +1,18 @@
 [
   {
-    "name": "Thomas",
-    "receivedDate": "2022-01-01",
-    "sentDate": "2022-01-01",
-    "content": "Message de Thomas. Je parle je parle, c'est pour faire plusieurs lignes et voir ce que ça donne au niveau de l'affichage",
-    "macAddress": "00-B0-D0-63-C2-26"
+    "name": "User",
+    "receivedDate": "DATE DU JOUR EN FORMAT yyyy-mm-jj hh:mm",
+    "sentDate": "DATE DU JOUR EN FORMAT yyyy-mm-jj hh:mm",
+    "content": "Super ! Je suis sur Slowchien !",
+    "macAddressSrc": "METTRE LA VARIABLE MY_MAC_ADDRESS",
+    "macAddressDest": "FF-FF-FF-FF-FF-FF"
   },
   {
-    "name": "Myriam",
-    "receivedDate": "2022-01-02",
-    "sentDate": "2022-01-01",
-    "content": "Message 2",
-    "macAddress": "1B-AE-12-63-45-CD"
-  },
-  {
-    "name": "Thomas",
-    "receivedDate": "2022-01-03",
-    "sentDate": "2022-01-01",
-    "content": "Message 3",
-    "macAddress": "00-B0-D0-63-C2-26"
-  },
-  {
-    "name": "Nathan",
-    "receivedDate": "2022-01-03",
-    "sentDate": "2022-01-01",
-    "content": "Message 3",
-    "macAddress": "AB-10-D0-12-C2-26"
+    "name": "SlowChien",
+    "receivedDate": "DATE DU JOUR EN FORMAT yyyy-mm-jj hh:mm",
+    "sentDate": "DATE DU JOUR EN FORMAT yyyy-mm-jj hh:mm",
+    "content": "Bienvenue dans Slowchien !",
+    "macAddressSrc": "FF-FF-FF-FF-FF-FF",
+    "macAddressDest": "METTRE LA VARIABLE MY_MAC_ADDRESS"
   }
 ]

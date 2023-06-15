@@ -1,18 +1,24 @@
 package com.example.slowchien.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.slowchien.R;
 import com.example.slowchien.databinding.FragmentHomeBinding;
+import com.example.slowchien.ui.exchange.ExchangeViewModel;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -37,6 +43,10 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        //HomeViewModel homeViewModel =
+        //        new ViewModelProvider(this).get(HomeViewModel.class);
+        //View root = binding.getRoot();
+
         TabLayout.Tab tab;
 
         View view = inflater.inflate(R.layout.fragment_home,container, false);
@@ -47,6 +57,35 @@ public class HomeFragment extends Fragment {
         TabLayout tabs =  view.findViewById(R.id.tabLayout);
         tabs.setupWithViewPager(viewPager);
 
+        //set new message button text
+        //final TextView textBtnNewMessage = binding.newMessage;
+        //homeViewModel.getNewMessageBtnLib().observe(getViewLifecycleOwner(), textBtnNewMessage::setText);
+
+        // Récupération de la référence au bouton de scan
+
+        Button newMessageButton = (Button) view.findViewById(R.id.newMessageBtn);
+        newMessageButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                //Fragment fragment = new NewMessageFragment();
+                //fragment.setArguments(args);
+
+
+                Intent intent = new Intent(getActivity(), NewMessageActivity.class);
+                intent.putExtra("pageName", "Nouveau Message");
+
+                startActivity(intent);
+            }
+        });
+/*
+        RelativeLayout.LayoutParams newMessageButtonRelativeLayout =
+                new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        //add rules
+        newMessageButtonRelativeLayout.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        newMessageButtonRelativeLayout.topMargin = 1000;
+
+        newMessageButton.setLayoutParams(newMessageButtonRelativeLayout);
+*/
         // Set icons of the tab bar
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs));
         tabs.setupWithViewPager(viewPager);
@@ -65,10 +104,10 @@ public class HomeFragment extends Fragment {
 
         SentFragment sentFragment = new SentFragment();
         Bundle sentArgs = new Bundle();
-        sentArgs.putString("id", "Sent");
+        sentArgs.putString("id", "Envoyés");
         sentFragment.setArguments(sentArgs);
-        adapter.addFragment(new ReceiveFragment(), "Receive");
-        adapter.addFragment(new SentFragment(), "Sent");
+        adapter.addFragment(new ReceiveFragment(), "Reçus");
+        adapter.addFragment(new SentFragment(), "Envoyés");
         adapter.addFragment(new ChatFragment(), "Chat");
 
 

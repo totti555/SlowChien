@@ -5,20 +5,31 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class ExchangeViewModel extends ViewModel {
-    private final MutableLiveData<String> mText;
     private final MutableLiveData<String> mTextBtnBT;
+    private final MutableLiveData<String> mTextBtnVisibility;
+    private final MutableLiveData<String> mTextBtnDisconnect;
+    private final MutableLiveData<String> mTextBtnSending;
 
     public ExchangeViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is exchange fragment");
 
         mTextBtnBT = new MutableLiveData<>();
         mTextBtnBT.setValue("📡 Scan Bluetooth");
-    }
 
-    public LiveData<String> getText() {
-        return mText;
+        mTextBtnVisibility = new MutableLiveData<>();
+        mTextBtnVisibility.setValue("👁 Se rendre visible");
+
+        mTextBtnDisconnect = new MutableLiveData<>();
+        mTextBtnDisconnect.setValue("❌ Déconnecter les appareils");
+
+        mTextBtnSending = new MutableLiveData<>();
+        mTextBtnSending.setValue("📤 Envoyer mes données");
     }
 
     public LiveData<String> getBluetoothBtnLib() { return mTextBtnBT; }
+
+    public LiveData<String> getVisibilityBtnLib() { return mTextBtnVisibility; }
+
+    public LiveData<String> getDisconnectBtnLib() { return mTextBtnDisconnect; }
+
+    public LiveData<String> getSendingBtnLib() { return mTextBtnSending; }
 }

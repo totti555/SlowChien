@@ -4,13 +4,13 @@ import androidx.annotation.NonNull;
 
 public class MarkerMap {
 
-    private double latitude;
+    private final double latitude;
 
-    private double longitude;
+    private final double longitude;
 
-    private String titre;
+    private final String titre;
 
-    private String desc;
+    private final String desc;
 
 
     public MarkerMap(double latitude, double longitude, String titre, String desc) {
@@ -25,32 +25,16 @@ public class MarkerMap {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
     public double getLongitude() {
         return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
     }
 
     public String getTitre() {
         return titre;
     }
 
-    public void setTitre(String titre) {
-        this.titre = titre;
-    }
-
     public String getDesc() {
         return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
 

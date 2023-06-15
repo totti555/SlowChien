@@ -1,4 +1,4 @@
-package com.example.slowchien.ui.home;
+package com.example.slowchien.ui.contact;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,15 +9,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.slowchien.R;
+import com.example.slowchien.ui.home.Message;
 
 import java.util.List;
 
-public class MessageAdapter extends ArrayAdapter<Message> {
+public class ContactAdapter extends ArrayAdapter<Contact> {
 
     private String pageName;
 
-    public MessageAdapter(Context context, List<Message> messages, String pageName) {
-        super(context, 0, messages);
+    public ContactAdapter(Context context, List<Contact> contacts, String pageName) {
+        super(context, 0, contacts);
         this.pageName = pageName;
     }
 
@@ -28,27 +29,13 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         }
 
 
-        Message message = getItem(position);
+        Contact contact = getItem(position);
 
         TextView nameTextView = convertView.findViewById(R.id.nameView);
-        nameTextView.setText(message.getName());
-
-        TextView titleTextView = convertView.findViewById(R.id.textView);
-        titleTextView.setText(message.getTitle());
+        nameTextView.setText(contact.getName());
 
         TextView macAddressView = convertView.findViewById(R.id.macAddressView);
-
-        if (pageName.equals("Sent")) {
-            macAddressView.setText(message.getMacAddressDest());
-        } else {
-            macAddressView.setText(message.getMacAddressSrc());
-        }
-
-        TextView dateSentView = convertView.findViewById(R.id.receivedDate);
-        dateSentView.setText(message.getFormattedReceivedDate());
-
-        TextView dateReceivedView = convertView.findViewById(R.id.sentDate);
-        dateReceivedView.setText(message.getFormattedSentDate());
+        macAddressView.setText(contact.getMacAddress());
 
         ImageView icon = convertView.findViewById(R.id.mtrl_list_item_icon);
         icon.setImageResource(R.drawable.ic_baseline_person_24);

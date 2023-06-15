@@ -1,0 +1,27 @@
+[
+  {
+    "macAddress": "00-B0-D0-63-C2-26",
+    "name": "Thomas name1",
+    "address":"le crous",
+    "description": "blablabla"
+  },
+  {
+    "macAddress": "1B-AE-12-63-45-CD",
+    "name": "Myriam name2",
+    "address":"le crous",
+    "description": "blablabla"
+  },
+  {
+    "macAddress": "1C-AE-12-63-45-CD",
+    "name": "QSDFG name3",
+    "address":"le crous",
+    "description": "blablabla"
+  },
+  {
+    "macAddress": "1D-AE-12-63-45-CD",
+    "name": "AZeRyY name4",
+    "address":"le crous",
+    "description": "blablabla"
+  }
+
+]
