@@ -1,7 +1,6 @@
 package com.example.slowchien.ui.contact;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
@@ -12,17 +11,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.slowchien.R;
 import com.example.slowchien.databinding.FragmentContactsBinding;
-import com.example.slowchien.ui.home.MessageAdapter;
 import com.example.slowchien.ui.location.JSONUtils;
 
 import org.json.JSONArray;
@@ -31,11 +26,8 @@ import org.json.JSONObject;
 
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class ContactFragment extends Fragment {
     private FragmentContactsBinding binding;
@@ -44,9 +36,7 @@ public class ContactFragment extends Fragment {
 
     private Handler mHandler;
     private static final long REFRESH_INTERVAL = 5000; // 5 secondes
-    private int lastVisibleItemPosition = 0;
 
-    private List<Contact> contactList;
     private ContactAdapter contactAdapter;
     private  ListView mListView;
 
@@ -54,15 +44,12 @@ public class ContactFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        binding = FragmentContactsBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
+        Button mScanButton = root.findViewById(R.id.ButtonAddContact);
+        mListView = root.findViewById(R.id.simpleListView);
 
-        //binding = FragmentContactsBinding.inflate(inflater, container, false);
-        // View root = binding.getRoot();
-
-
-        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
-        Button mScanButton = view.findViewById(R.id.ButtonAddContact);
-        mListView = view.findViewById(R.id.simpleListView);
         loadContactsFromJson();
         mListView.setAdapter(contactAdapter);
 
@@ -70,13 +57,14 @@ public class ContactFragment extends Fragment {
 
         mHandler = new Handler();
         startRefreshing();
-        return view;
+
+        return root;
     }
 
     private void showAddContactDialog() {
         Dialog dialog = new Dialog(requireContext(), R.style.RoundDialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(getLayoutInflater().inflate(R.layout.fragement_contacts_popup_add,null));
+        dialog.setContentView(getLayoutInflater().inflate(R.layout.fragment_contacts_popup_add,null));
 
         int width = getResources().getDisplayMetrics().widthPixels;
         int dialogWidth = (int) (width * 0.9); // 70% de la largeur de l'écran
@@ -108,7 +96,7 @@ public class ContactFragment extends Fragment {
             String address = editTextAddress.getText().toString();
             String description = editTextDescription.getText().toString();
 
-            JSONUtils.ajouterValeurJSONContact(getContext(), CONTACTS_FILE, macAddress, name, address, description);
+            JSONUtils.ajouterValeurJSONContact(requireContext(), CONTACTS_FILE, macAddress, name, address, description);
 
             dialog.dismiss();
         });
@@ -118,7 +106,7 @@ public class ContactFragment extends Fragment {
 
 
     public void loadContactsFromJson() {
-        contactList = new ArrayList<>();
+        List<Contact> contactList = new ArrayList<>();
 
         try {
             File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
@@ -156,7 +144,7 @@ public class ContactFragment extends Fragment {
 
     private void refreshData() {
         // Scroll position and reload
-        lastVisibleItemPosition = mListView.getFirstVisiblePosition();
+        int lastVisibleItemPosition = mListView.getFirstVisiblePosition();
         loadContactsFromJson();
         mListView.setAdapter(contactAdapter);
         mListView.setSelection(lastVisibleItemPosition);
