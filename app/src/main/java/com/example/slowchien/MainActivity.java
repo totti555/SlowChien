@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
     private static final String JSON_DIRECTORY = "json";
+    private static final String CONTACTS_FILE = "contacts.json";
     private static final String CHAT_FILE = "chat.json";
 
     @Override
@@ -59,12 +60,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-
-
         // Fonction pour clean tout le stockage interne (à décommenter si nécéssaire)
         // JSONUtils.cleanAllJSONFiles(getApplicationContext());
 
         initJSONFile(getApplicationContext(),MESSAGE_FILE,getMacAddr(getApplicationContext()));
+        JSONUtils.initContactFile(getApplicationContext(),CONTACTS_FILE,getMacAddr(getApplicationContext()));
         JSONUtils.créerChatJson(getApplicationContext());
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, SENT_FILE, "macAddressSrc");
         JSONUtils.createSentReceiveJson(getApplicationContext(), MESSAGE_FILE, RECEIVED_FILE, "macAddressDest");

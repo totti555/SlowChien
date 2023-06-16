@@ -5,21 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.location.LocationFragment">
-<!--commentt-->
-    <TextView
-        android:id="@+id/text_contacts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
     <Button
         android:id="@+id/ButtonAddContact"
@@ -28,12 +13,22 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:textAlignment="center"
+        android:text="AJOUTER CONTACT"
         android:textSize="20sp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <ListView
-        android:id="@+id/listViewContacts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:id="@+id/simpleListView"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:divider="@color/material_blue_grey_800"
+        android:dividerHeight="1dp"
+        android:paddingBottom="56dp"
+        app:layout_constraintTop_toBottomOf="@id/ButtonAddContact"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

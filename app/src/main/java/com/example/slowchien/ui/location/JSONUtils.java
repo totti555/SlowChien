@@ -41,6 +41,7 @@ public class JSONUtils {
     private static final String CHAT_FILE = "chat.json";
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
+    public static String MY_MAC_ADDRESS = MainActivity.getMacAddr();
 
 
 
@@ -49,6 +50,7 @@ public class JSONUtils {
 
         // Création du répertoire "json" dans le stockage interne
         File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
+
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -56,7 +58,8 @@ public class JSONUtils {
         try {
             // Création du fichier JSON dans le répertoire "json"
             File file = new File(directory, fileName);
-            if( !file.exists() ){
+            String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
+            if( !file.exists() || jsonString.equals("[]")){
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(jsonData);
                 fileWriter.close();
@@ -254,12 +257,45 @@ public class JSONUtils {
         cleanJSONFile(context, SENT_FILE);
         cleanJSONFile(context, RECEIVED_FILE);
         cleanJSONFile(context, CHAT_FILE);
-        cleanJSONFile(context, CONTACT_FILE);
-        initJSONFile2(context, MESSAGES_FILE,MainActivity.getMacAddr(context));
+        initJSONFile2(context, MESSAGES_FILE,MY_MAC_ADDRESS);
 
         créerChatJson(context);
         createSentReceiveJson(context, MESSAGES_FILE, SENT_FILE, "macAddressSrc");
         createSentReceiveJson(context, MESSAGES_FILE, RECEIVED_FILE, "macAddressDest");
+    }
+
+    public static void initContactFile(Context context, String file,String MacAdrr) {
+        try {
+            // Création de l'objet JSON
+            File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
+            String filePath = directory + "/" + file;
+
+            JSONArray jsonArray = new JSONArray();
+
+            // Création du premier objet
+            JSONObject userObject = new JSONObject();
+            userObject.put("name", "SlowChien");
+            userObject.put("macAddress", "AB:CD:EF:AB:CD:EF");
+            userObject.put("address", "???");
+            userObject.put("description", "Slowchien - L'appli sans réseau");
+
+            // Création du deuxième objet
+            JSONObject slowChienObject = new JSONObject();
+            slowChienObject.put("name", "User");
+            slowChienObject.put("macAddress", MacAdrr);
+            slowChienObject.put("address", "???");
+            slowChienObject.put("description", "Modifie ton profil");
+
+            jsonArray.put(slowChienObject);
+            jsonArray.put(userObject);
+
+            // Écriture du fichier JSON dans le stockage interne
+            String jsonString = jsonArray.toString();
+            JSONUtils.saveJsonFileToInternalStorage(context, file, jsonString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
