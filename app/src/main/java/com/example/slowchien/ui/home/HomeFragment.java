@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
             R.drawable.ic_send_24,
             R.drawable.ic_question_24
     };
-    String myMacAddress = MainActivity.getMacAddr();
+    String myMacAddress = MainActivity.getMacAddr(getContext());
     private static final String MESSAGES_FILE = "messages.json";
     private static final String CONTACTS_FILE = "contacts.json";
     private static final String JSON_DIRECTORY = "json";

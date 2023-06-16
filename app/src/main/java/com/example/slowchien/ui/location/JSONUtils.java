@@ -1,6 +1,7 @@
 package com.example.slowchien.ui.location;
 
 import static com.example.slowchien.MainActivity.getCurrentDateTime;
+import static com.example.slowchien.MainActivity.getMacAddr;
 
 import android.content.Context;
 import android.util.Log;
@@ -41,7 +42,6 @@ public class JSONUtils {
     private static final String CHAT_FILE = "chat.json";
     private static final String SENT_FILE = "sent.json";
     private static final String RECEIVED_FILE = "received.json";
-    public static String MY_MAC_ADDRESS = MainActivity.getMacAddr();
 
 
 
@@ -257,7 +257,7 @@ public class JSONUtils {
         cleanJSONFile(context, SENT_FILE);
         cleanJSONFile(context, RECEIVED_FILE);
         cleanJSONFile(context, CHAT_FILE);
-        initJSONFile2(context, MESSAGES_FILE,MY_MAC_ADDRESS);
+        initJSONFile2(context, MESSAGES_FILE,getMacAddr(context));
 
         créerChatJson(context);
         createSentReceiveJson(context, MESSAGES_FILE, SENT_FILE, "macAddressSrc");
