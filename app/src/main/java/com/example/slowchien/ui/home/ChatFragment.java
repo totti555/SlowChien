@@ -31,14 +31,14 @@ public class ChatFragment extends Fragment {
 
     private ListView mListView;
     private List<JSONObject> filteredList;
-    public static String myMacAddress = MainActivity.getMacAddr();
+
     private static final String JSON_DIRECTORY = "json";
     private static final String CHAT_FILE = "chat.json";
 
     private Handler mHandler;
     private static final long REFRESH_INTERVAL = 5000; // 5 secondes
     private int lastVisibleItemPosition = 0;
-
+    public static String myMacAddress;
     private MessageAdapter adapter;
 
     public ChatFragment() {
@@ -210,6 +210,7 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        myMacAddress = MainActivity.getMacAddr(getContext());
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         mListView = view.findViewById(R.id.simpleListView);
         loadMessagesFromJson();

@@ -17,7 +17,6 @@ public class SettingsViewModel extends ViewModel {
         mTextBtnChangeMACAdress = new MutableLiveData<>();
         mTextBtnChangeMACAdress.setValue("Modifier la mac adrresse");
         mTextMACAddress = new MutableLiveData<>();
-        mTextMACAddress.setValue("Adresse MAC :"+ MainActivity.getMacAddr());
     }
 
     public LiveData<String> getCleanBtnLib() { return mTextBtnClean; }

@@ -41,7 +41,6 @@ import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
 
-    String myMacAddress = MainActivity.getMacAddr();
     private EditText messageEditText;
     private ImageButton sendButton;
     private String selectedName;
@@ -189,7 +188,7 @@ public class ChatActivity extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Message newMessage = new Message(selectedName, currentDate, currentDate, messageContent, myMacAddress, selectedMacAddress);
+        Message newMessage = new Message(selectedName, currentDate, currentDate, messageContent,MainActivity.getMacAddr(getApplicationContext()), selectedMacAddress);
 
         JSONArray jsonArray = loadJSONArrayFromFile(filePath);
         JSONObject messageObject = new JSONObject();

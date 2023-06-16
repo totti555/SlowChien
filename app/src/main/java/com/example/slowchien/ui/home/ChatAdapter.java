@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ChatAdapter extends ArrayAdapter<Message> {
 
-    public String myMacAddress = MainActivity.getMacAddr();
+    public String myMacAddress = MainActivity.getMacAddr(getContext());
 
     public ChatAdapter(Context context, List<Message> messages) {
         super(context, 0, messages);
