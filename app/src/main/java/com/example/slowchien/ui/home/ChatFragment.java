@@ -1,5 +1,6 @@
 package com.example.slowchien.ui.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -31,7 +32,6 @@ public class ChatFragment extends Fragment {
 
     private ListView mListView;
     private List<JSONObject> filteredList;
-    public static String myMacAddress = MainActivity.getMacAddr();
     private static final String JSON_DIRECTORY = "json";
     private static final String CHAT_FILE = "chat.json";
 
@@ -45,13 +45,13 @@ public class ChatFragment extends Fragment {
         // Required empty public constructor
     }
 
-    private static List<JSONObject> filterMessages(JSONArray jsonArray) throws JSONException {
+    private static List<JSONObject> filterMessages(Context context, JSONArray jsonArray) throws JSONException {
         Map<String, JSONObject> latestMessages = new HashMap<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             // Définit l'adresse mac de l'utilisateur
-            String macAddressSrc = myMacAddress.equals(jsonObject.getString("macAddressSrc"))
+            String macAddressSrc = MainActivity.getMacAddr(context).equals(jsonObject.getString("macAddressSrc"))
                     ? jsonObject.getString("macAddressDest")
                     : jsonObject.getString("macAddressSrc");
 
@@ -150,7 +150,7 @@ public class ChatFragment extends Fragment {
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
 
             JSONArray jsonArray = new JSONArray(jsonString);
-            filteredList = filterMessages(jsonArray);
+            filteredList = filterMessages(getContext(),jsonArray);
             for (JSONObject jsonObject : filteredList) {
                 String name = jsonObject.getString("name");
                 String macAddressSrc = jsonObject.getString("macAddressSrc");
@@ -219,7 +219,7 @@ public class ChatFragment extends Fragment {
             try {
                 JSONObject selectedMessage = filteredList.get(position);
 
-                String selectedMacAddress = myMacAddress.equals(selectedMessage.getString("macAddressSrc"))
+                String selectedMacAddress = MainActivity.getMacAddr(getContext()).equals(selectedMessage.getString("macAddressSrc"))
                         ? selectedMessage.getString("macAddressDest")
                         : selectedMessage.getString("macAddressSrc");
                 String name = selectedMessage.getString("name");

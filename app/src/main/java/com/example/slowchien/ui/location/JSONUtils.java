@@ -41,7 +41,7 @@ public class JSONUtils {
     private static final String SENT_FILE = "sent.json";
     private static final String CONTACTS_FILE = "contacts.json";
     private static final String RECEIVED_FILE = "received.json";
-    public static String MY_MAC_ADDRESS = MainActivity.getMacAddr();
+
 
 
 
@@ -171,10 +171,11 @@ public class JSONUtils {
 
     public static void créerChatJson(Context context) {
         try {
+            String MY_MAC_ADDRESS=MainActivity.getMacAddr(context);
             String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
             String filePath = jsonDirectoryPath + "/" + MESSAGES_FILE;
             String outputFilePath = jsonDirectoryPath + "/" + CHAT_FILE;
-            System.out.println(MY_MAC_ADDRESS);
+            System.out.println(MainActivity.getMacAddr(context));
             // Chargement JSON
             String content = loadJSONFromFile(filePath);
             System.out.println(content);
@@ -220,7 +221,7 @@ public class JSONUtils {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String value = jsonObject.optString(filterKey, "");
 
-                if (value.equals(MY_MAC_ADDRESS)) {
+                if (value.equals(MainActivity.getMacAddr(context))) {
                     filteredArray.put(jsonObject);
                 }
             }
@@ -258,7 +259,7 @@ public class JSONUtils {
         cleanJSONFile(context, RECEIVED_FILE);
         cleanJSONFile(context, CHAT_FILE);
         // cleanJSONFile(context, CONTACTS_FILE);
-        initJSONFile2(context, MESSAGES_FILE,MY_MAC_ADDRESS);
+        initJSONFile2(context, MESSAGES_FILE,MainActivity.getMacAddr(context));
         // initContactFile(context,CONTACTS_FILE,MY_MAC_ADDRESS);
         créerChatJson(context);
         createSentReceiveJson(context, MESSAGES_FILE, SENT_FILE, "macAddressSrc");
@@ -326,7 +327,7 @@ public class JSONUtils {
                 String srcAddress = message.optString("macAddressSrc", "");
 
                 // Vérifier si l'adresse source correspond à MY_MAC_ADDRESS
-                if (srcAddress.equals(MY_MAC_ADDRESS)) {
+                if (srcAddress.equals(MainActivity.getMacAddr(context))) {
                     // Vérifier si le message existe déjà dans le fichier chat.json
                     if (!containsMessage(filteredMessages, message)) {
                         filteredMessages.put(message);
