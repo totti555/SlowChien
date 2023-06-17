@@ -13,10 +13,13 @@ public class SettingsViewModel extends ViewModel {
 
     public SettingsViewModel() {
         mTextBtnClean = new MutableLiveData<>();
-        mTextBtnClean.setValue("Supprimer les données");
+        mTextBtnClean.setValue("❌ Supprimer les données");
+
         mTextBtnChangeMACAdress = new MutableLiveData<>();
-        mTextBtnChangeMACAdress.setValue("Modifier la mac adrresse");
+        mTextBtnChangeMACAdress.setValue("🛠 Modifier adresse MAC");
+
         mTextMACAddress = new MutableLiveData<>();
+        mTextMACAddress.setValue("Adresse MAC\n"+ MainActivity.getMacAddr());
     }
 
     public LiveData<String> getCleanBtnLib() { return mTextBtnClean; }

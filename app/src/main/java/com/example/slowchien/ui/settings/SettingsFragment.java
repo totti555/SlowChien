@@ -49,15 +49,13 @@ public class SettingsFragment extends Fragment {
         Button mScanButton2 = root.findViewById(R.id.ChangeMacAdress);
 
          final TextView textViewMACAddress = binding.textSettings;
-        TextView textMacAdress=root.findViewById(R.id.text_settings);
-        textMacAdress.setText("Adresse MAC :"+ MainActivity.getMacAddr(getContext()));
         settingsViewModel.getMACAddressText() .observe(getViewLifecycleOwner(), textViewMACAddress::setText);
-
+        TextView textMacAdress=root.findViewById(R.id.text_settings);
 
         // Ajout d'un écouteur sur le bouton de scan
         // Utilisation dans la méthode onCreateView()
         mScanButton.setOnClickListener(v -> showConfirmationPopup(v));
-        mScanButton2.setOnClickListener(v -> changeMacAddress(v,textMacAdress));
+        //mScanButton2.setOnClickListener(v -> changeMacAddress(v,textMacAdress));
         return root;
     }
 
@@ -193,8 +191,9 @@ public class SettingsFragment extends Fragment {
         Button validateButton = createButton("Valider", v -> {
             String macAddress = macAddressEditText.getText().toString();
             // Faites quelque chose avec l'adresse MAC saisie
-            MainActivity.saveMacAddress(getContext(),macAddress);
-            textMacAdress.setText("Adresse MAC :"+ MainActivity.getMacAddr(getContext()));
+            MainActivity.MAC_ADDRESS=macAddress;
+            textMacAdress.setText("Adresse MAC : "+ MainActivity.getMacAddr());
+            //todo, parcourir les json et remplacer l'ancienne adresse par la nouvelle
             dialog.dismiss();
         });
         buttonLayout.addView(validateButton);
