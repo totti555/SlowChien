@@ -146,7 +146,7 @@ public class ChatFragment extends Fragment {
         try {
             File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
             File file = new File(directory, CHAT_FILE);
-            JSONUtils.créerChatJson(requireContext());
+            JSONUtils.createChatJSON(requireContext());
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
 
             JSONArray jsonArray = new JSONArray(jsonString);

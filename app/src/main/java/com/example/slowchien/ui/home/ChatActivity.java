@@ -73,7 +73,7 @@ public class ChatActivity extends AppCompatActivity {
         try {
             File directory = new File(this.getFilesDir(), JSON_DIRECTORY);
             File file = new File(directory, CHAT_FILE);
-            JSONUtils.créerChatJson(getApplicationContext());
+            JSONUtils.createChatJSON(getApplicationContext());
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
 
             // Conversion de la chaîne JSON en un tableau JSON
@@ -213,7 +213,7 @@ public class ChatActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
 
-        JSONUtils.updateChatJson(getApplicationContext());
+        JSONUtils.updateChatJSON(getApplicationContext());
 
         // Recharge la page
         recreate();

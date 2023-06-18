@@ -60,10 +60,6 @@ public class MyBluetoothService {
         state = STATE_NONE;
     }
 
-    public synchronized int getState() {
-        return state;
-    }
-
     public synchronized void start() {
         System.out.println(">>> MyBluetoothService : start() -> Création AcceptThreads");
         if (connectThread != null) {

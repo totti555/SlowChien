@@ -96,7 +96,7 @@ public class ContactFragment extends Fragment {
             String address = editTextAddress.getText().toString();
             String description = editTextDescription.getText().toString();
 
-            JSONUtils.ajouterValeurJSONContact(requireContext(), CONTACTS_FILE, macAddress, name, address, description);
+            JSONUtils.updateContactsJSON(requireContext(), macAddress, name, address, description);
 
             dialog.dismiss();
         });
