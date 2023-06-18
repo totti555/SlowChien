@@ -53,7 +53,6 @@ public class HomeFragment extends Fragment {
             R.drawable.ic_send_24,
             R.drawable.ic_question_24
     };
-    String myMacAddress = MainActivity.getMacAddr();
     private static final String MESSAGES_FILE = "messages.json";
     private static final String CONTACTS_FILE = "contacts.json";
     private static final String JSON_DIRECTORY = "json";
@@ -269,7 +268,7 @@ public class HomeFragment extends Fragment {
         }
         Spinner spinnerContacts = dialog.findViewById(R.id.spinnerContacts);
         String selectedContact = spinnerContacts.getSelectedItem().toString();
-        Message newMessage = new Message(selectedContact, currentDate, currentDate, messageContent, myMacAddress, macAddressDest);
+        Message newMessage = new Message(selectedContact, currentDate, currentDate, messageContent,MainActivity.getMacAddr(getContext()), macAddressDest);
 
         File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
         File file = new File(directory, MESSAGES_FILE);
