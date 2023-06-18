@@ -48,11 +48,8 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Scanner;
 
 public class LocationFragment extends Fragment {
 
@@ -73,8 +70,6 @@ public class LocationFragment extends Fragment {
 
         binding = FragmentLocationBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        initJSONFile();
 
         messageTextView = root.findViewById(R.id.messageTextView);
         mapView = root.findViewById(R.id.map_view);
@@ -225,7 +220,7 @@ public class LocationFragment extends Fragment {
         // Actualisation de la carte pour afficher le marqueur
         mapView.invalidate();
 
-        JSONUtils.ajouterValeurJSON(getContext(), MARKERS_FILE, latitude, longitude, titre, desc);
+        JSONUtils.updateMarkersJSON(requireContext(), latitude, longitude, titre, desc);
     }
 
     @Override
@@ -312,21 +307,6 @@ public class LocationFragment extends Fragment {
         messageTextView.setText("Veuillez autoriser l'application à accéder à votre localisation.");
         messageTextView.setTextColor(getResources().getColor(android.R.color.black));
         messageTextView.setVisibility(View.VISIBLE);
-    }
-
-    public void initJSONFile(){
-
-        try {
-            // Récupération du fichier JSON contenu dans le répertoire assets
-            InputStream inputStream = requireActivity().getAssets().open(MARKERS_FILE);
-            String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
-
-            // Copie du fichier JSON dans le stockage interne depuis le fichier assets
-            JSONUtils.saveJsonFileToInternalStorage(requireContext(), MARKERS_FILE, jsonString);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void loadMarkers(MapView mapView){

@@ -289,7 +289,7 @@ public class HomeFragment extends Fragment {
         fileWriter.flush();
         fileWriter.close();
 
-        JSONUtils.updateChatJson(getContext());
+        JSONUtils.updateChatJSON(getContext());
 
 
     }

@@ -6,6 +6,8 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +16,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -32,7 +38,9 @@ import com.example.slowchien.databinding.FragmentExchangeBinding;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -52,8 +60,6 @@ public class ExchangeFragment extends Fragment {
     public Button mDisconnectButton;
     public Button mSendingButton;
 
-    private static final int REQUEST_ENABLE_BT = 1;
-
     private static final int PERMISSION_SCAN_REQUEST = 123;
     private static final int PERMISSION_VISI_REQUEST = 321;
     private static final int PERMISSION_LINK_REQUEST = 666;
@@ -71,13 +77,27 @@ public class ExchangeFragment extends Fragment {
     private static final String MARKERS_FILE = "markers.json";
 
     BluetoothService bluetoothService;
-    MyBluetoothService myBluetoothService = new MyBluetoothService(this.getActivity(), new Handler());
 
-    private static final UUID UUID_BT =
+    private static final String NAME = "SlowChien";
+    private static final String TAG = "BluetoothService";
+    private static final UUID MY_UUID =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    private Handler mHandler;
+
+    // #defines for identifying shared types between calling functions
+    private final static int REQUEST_ENABLE_BT = 1; // used to identify adding bluetooth names
+    public final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
+    private final static int CONNECTING_STATUS = 3; // used in bluetooth handler to identify message status
+
+    boolean isConnected = false;
+
+    ServerThread serverThread = null;
+    ClientThread clientThread = null;
+    ConnectedThread connectedThread = null;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -153,6 +173,24 @@ public class ExchangeFragment extends Fragment {
             }
         });
 
+        mHandler = new Handler(Looper.getMainLooper()){
+            @Override
+            public void handleMessage(Message msg){
+                if(msg.what == MESSAGE_READ){
+                    String readMessage;
+                    readMessage = new String((byte[]) msg.obj, StandardCharsets.UTF_8);
+                    System.out.println((">>> Message : " + readMessage));
+                }
+
+                if(msg.what == CONNECTING_STATUS){
+                    if(msg.arg1 == 1)
+                        System.out.println(">>> Bluetooth CONNECTED : " + msg.obj);
+                    else
+                        System.out.println(">>> Echec connexion");
+                }
+            }
+        };
+
         return root;
     }
 
@@ -187,6 +225,7 @@ public class ExchangeFragment extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void checkPairedDevicesPermissions() {
 
         // Vérification des permissions BLUETOOTH_CONNECT et BLUETOOTH_SCAN
@@ -194,7 +233,7 @@ public class ExchangeFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 
-                    if (ContextCompat.checkSelfPermission(this.requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
+                    if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.BLUETOOTH_CONNECT)
                             == PackageManager.PERMISSION_GRANTED) {
 
                         setupAlertDialogPaired();
@@ -208,7 +247,11 @@ public class ExchangeFragment extends Fragment {
                 } else {
                     setupAlertDialogPaired();
                 }
+            } else {
+                setupAlertDialogPaired();
             }
+        } else {
+            setupAlertDialogPaired();
         }
     }
 
@@ -228,6 +271,8 @@ public class ExchangeFragment extends Fragment {
             } else {
                 requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_SCAN_REQUEST);
             }
+        } else {
+            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_SCAN_REQUEST);
         }
     }
 
@@ -247,6 +292,8 @@ public class ExchangeFragment extends Fragment {
             } else {
                 requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_VISI_REQUEST);
             }
+        } else {
+            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_VISI_REQUEST);
         }
     }
 
@@ -298,6 +345,28 @@ public class ExchangeFragment extends Fragment {
                                 Toast.makeText(requireContext(), "Permission Scan Bluetooth refusée", Toast.LENGTH_SHORT).show();
                             }
                         }
+                    } else {
+                        if (grantResults.length > 0 && grantResults[0]
+                                == PackageManager.PERMISSION_GRANTED) {
+
+                            // Permission accordée, lancement du scan
+                            checkBTConfigAndRun("SCAN");
+
+                        } else {
+                            // Permission refusée
+                            Toast.makeText(requireContext(), "Permission Scan Bluetooth refusée", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    if (grantResults.length > 0 && grantResults[0]
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        // Permission accordée, lancement du scan
+                        checkBTConfigAndRun("SCAN");
+
+                    } else {
+                        // Permission refusée
+                        Toast.makeText(requireContext(), "Permission Scan Bluetooth refusée", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
@@ -310,6 +379,9 @@ public class ExchangeFragment extends Fragment {
 
                                 // Permission accordée, changement d'état
                                 checkBTConfigAndRun("VISI");
+                            } else {
+                                // Permission refusée
+                                Toast.makeText(requireContext(), "Permission Visibilité refusée", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             if (grantResults.length > 0 && grantResults[0]
@@ -317,8 +389,29 @@ public class ExchangeFragment extends Fragment {
 
                                 // Permission accordée, changement d'état
                                 checkBTConfigAndRun("VISI");
+                            } else {
+                                // Permission refusée
+                                Toast.makeText(requireContext(), "Permission Visibilité refusée", Toast.LENGTH_SHORT).show();
                             }
                         }
+                    } else {
+                        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                            // Permission accordée, changement d'état
+                            checkBTConfigAndRun("VISI");
+                        } else {
+                            // Permission refusée
+                            Toast.makeText(requireContext(), "Permission Visibilité refusée", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                        // Permission accordée, changement d'état
+                        checkBTConfigAndRun("VISI");
+                    } else {
+                        // Permission refusée
+                        Toast.makeText(requireContext(), "Permission Visibilité refusée", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
@@ -363,6 +456,7 @@ public class ExchangeFragment extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
     private void setupAlertDialogScan(){
 
@@ -387,19 +481,23 @@ public class ExchangeFragment extends Fragment {
 
                         selectedDevice.createBond();
 
-                        //bluetoothService = new BluetoothService(requireContext(), bluetoothAdapter);
-
-                        myBluetoothService.start();
                     }
                     // Si le périphérique est déjà appairé, pas besoin de créer la liaison
                     else {
                         selectedDevice = device;
 
-                        //bluetoothService = new BluetoothService(requireContext(), bluetoothAdapter);
+                        if(serverThread != null){
+                            serverThread.cancel();
+                        }
+                        serverThread = new ServerThread();
+                        serverThread.start();
 
-                        myBluetoothService.start();
-                        myBluetoothService.connect(selectedDevice);
-                        //bluetoothService.startClient(selectedDevice,UUID_BT);
+                        if(clientThread != null){
+                            clientThread.cancel();
+                        }
+                        clientThread = new ClientThread(selectedDevice);
+                        clientThread.start();
+
                     }
                 } else {
                     // Si pas assez d'infos sur le périphérique ciblé
@@ -410,6 +508,7 @@ public class ExchangeFragment extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
     private void setupAlertDialogPaired(){
 
@@ -455,12 +554,17 @@ public class ExchangeFragment extends Fragment {
 
                 selectedDevice = device;
 
-                //bluetoothService = new BluetoothService(requireContext(), bluetoothAdapter);
+                if(serverThread != null){
+                    serverThread.cancel();
+                }
+                serverThread = new ServerThread();
+                serverThread.start();
 
-                //bluetoothService.startClient(selectedDevice,UUID_BT);
-
-                myBluetoothService.start();
-                myBluetoothService.connect(selectedDevice);
+                if(clientThread != null){
+                    clientThread.cancel();
+                }
+                clientThread = new ClientThread(selectedDevice);
+                clientThread.start();
 
             } else {
                 // Si pas assez d'infos sur le périphérique ciblé
@@ -513,10 +617,12 @@ public class ExchangeFragment extends Fragment {
         Toast.makeText(requireContext(), "Envoi des données en cours...", Toast.LENGTH_SHORT).show();
 
         // Récupération du fichier JSON contenu dans le répertoire assets
+        /*
         InputStream inputStream = requireActivity().getAssets().open(MARKERS_FILE);
         String jsonString = new Scanner(inputStream).useDelimiter("\\A").next();
 
         bluetoothService.write(jsonString.getBytes(StandardCharsets.UTF_8));
+         */
 
     }
 
@@ -540,6 +646,7 @@ public class ExchangeFragment extends Fragment {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         IntentFilter bondFilter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         receiver = new BroadcastReceiver() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("MissingPermission")
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -584,8 +691,18 @@ public class ExchangeFragment extends Fragment {
                         if (bondedDevice.equals(selectedDevice)) {
                             if (bondState == BluetoothDevice.BOND_BONDED) {
                                 // Périphérique appairé, connexion au périphérique
-                                //bluetoothService.startClient(selectedDevice,UUID_BT);
-                                myBluetoothService.connect(selectedDevice);
+
+                                if(serverThread != null){
+                                    serverThread.cancel();
+                                }
+                                serverThread = new ServerThread();
+                                serverThread.start();
+
+                                if(clientThread != null){
+                                    clientThread.cancel();
+                                }
+                                clientThread = new ClientThread(selectedDevice);
+                                clientThread.start();
 
                                 // Une fois la connexion établie
                                 // Disparition des boutons de scan et de visibilité du téléphone
@@ -610,6 +727,194 @@ public class ExchangeFragment extends Fragment {
         requireActivity().registerReceiver(receiver, bondFilter);
     }
 
+
+
+    private class ServerThread extends Thread {
+        BluetoothServerSocket serverSocket;
+
+        @SuppressLint("MissingPermission")
+        public ServerThread() {
+            BluetoothServerSocket tmp = null;
+            try {
+                // Création d'un serveur BluetoothServerSocket
+                tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID);
+            } catch (IOException e) {
+                Log.e(TAG, "Erreur lors de la création du BluetoothServerSocket", e);
+            }
+            serverSocket = tmp;
+        }
+
+        public void run() {
+            BluetoothSocket socket = null;
+            while(!isConnected){
+                try {
+                    // Attente d'une connexion entrante
+                    socket = serverSocket.accept();
+                } catch (IOException e) {
+                    Log.e(TAG, "Erreur lors de l'acceptation de la connexion", e);
+                }
+
+                if (socket != null) {
+                    System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                    // La connexion a été acceptée
+                    // Vous pouvez utiliser le socket pour communiquer avec le périphérique distant
+
+                    // Fermer le BluetoothServerSocket une fois la connexion établie
+                    try {
+                        serverSocket.close();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Erreur lors de la fermeture du BluetoothServerSocket", e);
+                    }
+                }
+            }
+        }
+
+        public void cancel() {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Erreur lors de la fermeture du BluetoothServerSocket", e);
+            }
+        }
+    }
+
+
+
+
+    private class ClientThread extends Thread {
+        BluetoothDevice serverDevice;
+        BluetoothSocket socket;
+
+        @SuppressLint("MissingPermission")
+        public ClientThread(BluetoothDevice device) {
+            BluetoothSocket tmp = null;
+            serverDevice = bluetoothAdapter.getRemoteDevice(device.getAddress());
+
+            try {
+                // Création d'un socket BluetoothSocket pour se connecter au périphérique distant
+                tmp = serverDevice.createRfcommSocketToServiceRecord(MY_UUID);
+            } catch (IOException e) {
+                Log.e(TAG, "Erreur lors de la création du BluetoothSocket", e);
+            }
+            socket = tmp;
+        }
+
+        @SuppressLint("MissingPermission")
+        public void run() {
+            // Annuler la découverte des périphériques Bluetooth
+
+            bluetoothAdapter.cancelDiscovery();
+
+            try {
+                // Établir la connexion avec le périphérique distant
+                socket.connect();
+                isConnected = true;
+            } catch (IOException e) {
+                mHandler.obtainMessage(CONNECTING_STATUS, -1, -1)
+                        .sendToTarget();
+                Log.e(TAG, "Erreur lors de la connexion au périphérique distant", e);
+                try {
+                    socket.close();
+                } catch (IOException e2) {
+                    Log.e(TAG, "Erreur lors de la fermeture du BluetoothSocket", e2);
+                }
+                return;
+            }
+
+            // La connexion a été établie
+            // Vous pouvez utiliser le socket pour communiquer avec le périphérique distant
+            if(isConnected){
+                System.out.println(">>> Envoi données");
+
+                    connectedThread = new ConnectedThread(socket);
+                    connectedThread.start();
+
+                    mHandler.obtainMessage(CONNECTING_STATUS, 1, -1)
+                            .sendToTarget();
+            }
+
+        }
+
+        public void cancel() {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Erreur lors de la fermeture du BluetoothSocket", e);
+            }
+        }
+    }
+
+
+
+
+    private class ConnectedThread extends Thread {
+        private final BluetoothSocket mmSocket;
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+
+        public ConnectedThread(BluetoothSocket socket) {
+            Log.d(TAG, "ConnectedThread: Starting.");
+
+            mmSocket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            try {
+                tmpIn = mmSocket.getInputStream();
+                tmpOut = mmSocket.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
+        }
+
+        public void run(){
+            byte[] buffer = new byte[1024];  // buffer store for the stream
+
+            int bytes; // bytes returned from read()
+
+            // Keep listening to the InputStream until an exception occurs
+            while (true) {
+                // Read from the InputStream
+                try {
+                    bytes = mmInStream.read(buffer);
+                    String incomingMessage = new String(buffer, 0, bytes);
+                    Log.d(TAG, "InputStream: " + incomingMessage);
+                } catch (IOException e) {
+                    Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
+                    break;
+                }
+            }
+        }
+
+        //Call this from the main activity to send data to the remote device
+        public void write(byte[] bytes) {
+            String text = new String(bytes, Charset.defaultCharset());
+            Log.d(TAG, "write: Writing to outputstream: " + text);
+            try {
+                mmOutStream.write(bytes);
+            } catch (IOException e) {
+                Log.e(TAG, "write: Error writing to output stream. " + e.getMessage() );
+            }
+        }
+
+        /* Call this from the main activity to shutdown the connection */
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException ignored) { }
+        }
+    }
+
+
+
+
+
+
+
+
     @Override
     public void onPause() {
         super.onPause();
@@ -626,9 +931,9 @@ public class ExchangeFragment extends Fragment {
         super.onDestroyView();
 
         // Arrêt de la recherche de périphériques Bluetooth
-        if(ContextCompat.checkSelfPermission(this.requireContext(), Manifest.permission.BLUETOOTH_CONNECT)
+        if(ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.BLUETOOTH_CONNECT)
                 == PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(this.requireContext(), Manifest.permission.BLUETOOTH_SCAN)
+                    && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.BLUETOOTH_SCAN)
                         == PackageManager.PERMISSION_GRANTED){
             if (bluetoothAdapter != null && bluetoothAdapter.isDiscovering()) {
                 stopBluetoothDiscovery();
