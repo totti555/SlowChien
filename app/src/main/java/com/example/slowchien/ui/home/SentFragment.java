@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.example.slowchien.MainActivity;
 import com.example.slowchien.R;
 import com.example.slowchien.ui.location.JSONUtils;
 
@@ -31,7 +32,7 @@ public class SentFragment extends Fragment {
     private ListView mListView;
     private static final String JSON_DIRECTORY = "json";
     private static final String SENT_FILE = "sent.json";
-
+    private static final String MESSAGE_FILE="messages.json";
     private Handler mHandler;
     private static final long REFRESH_INTERVAL = 5000; // 5 secondes
     private int lastVisibleItemPosition = 0;
@@ -49,9 +50,10 @@ public class SentFragment extends Fragment {
 
         try {
             File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
-            File file = new File(directory, SENT_FILE);
+            File file = new File(directory, MESSAGE_FILE);
 
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
+            System.out.println("debut:"+jsonString);
             JSONArray jsonArray = new JSONArray(jsonString);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -71,10 +73,16 @@ public class SentFragment extends Fragment {
                 }
                 Date receivedDate = inputFormat.parse(receivedDateStr);
                 Date sentDate = inputFormat.parse(sentDateStr);
-                messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
-            }
+                System.out.println("ma mac adresse :"+MainActivity.getMacAddr(getContext()));
+                System.out.println("mac source "+macAddressSrc+" message: "+content);
+                if(MainActivity.getMacAddr(getContext()).equals(macAddressSrc)) {
+                    System.out.print("l'ajout a fonctionné");
+                    messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
+                }
+                }
             JSONUtils.sortMessagesByNewestDate(messageList,"Sent");
             adapter = new MessageAdapter(getActivity(), messageList, "Sent");
+            System.out.println("fin");
         } catch (JSONException | ParseException e) {
             e.printStackTrace();
         }
