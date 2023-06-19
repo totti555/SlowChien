@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import com.example.slowchien.MainActivity;
 import com.example.slowchien.R;
 import com.example.slowchien.ui.location.JSONUtils;
 import org.json.JSONArray;
@@ -26,6 +28,7 @@ public class ReceiveFragment extends Fragment {
     private ListView mListView;
     private static final String JSON_DIRECTORY = "json";
     private static final String RECEIVE_FILE = "received.json";
+    private static final String MESSAGE_FILE="messages.json";
 
     private Handler mHandler;
     private static final long REFRESH_INTERVAL = 5000; // 5 secondes
@@ -44,7 +47,7 @@ public class ReceiveFragment extends Fragment {
 
         try {
             File directory = new File(requireContext().getFilesDir(), JSON_DIRECTORY);
-            File file = new File(directory, RECEIVE_FILE);
+            File file = new File(directory, MESSAGE_FILE);
 
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
             JSONArray jsonArray = new JSONArray(jsonString);
@@ -66,7 +69,9 @@ public class ReceiveFragment extends Fragment {
                 }
                 Date receivedDate = inputFormat.parse(receivedDateStr);
                 Date sentDate = inputFormat.parse(sentDateStr);
-                messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
+                if(MainActivity.getMacAddr(getContext()).equals(macAddressDest)) {
+                    messageList.add(new Message(content, receivedDate, sentDate, name, macAddressSrc, macAddressDest));
+                }
             }
             JSONUtils.sortMessagesByNewestDate(messageList, "Received");
             adapter = new MessageAdapter(getActivity(), messageList, "Received");

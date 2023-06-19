@@ -4,7 +4,6 @@ import static com.example.slowchien.MainActivity.getCurrentDateTime;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.slowchien.MainActivity;
 import com.example.slowchien.ui.home.Message;
@@ -16,17 +15,11 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -37,11 +30,11 @@ public class JSONUtils {
     private static final String JSON_DIRECTORY = "json";
     private static final String MARKERS_FILE = "markers.json";
     private static final String MESSAGES_FILE = "messages.json";
-    private static final String CONTACT_FILE = "contacts.json";
     private static final String CHAT_FILE = "chat.json";
     private static final String SENT_FILE = "sent.json";
+    private static final String CONTACTS_FILE = "contacts.json";
     private static final String RECEIVED_FILE = "received.json";
-    public static String MY_MAC_ADDRESS = MainActivity.getMacAddr();
+
 
 
 
@@ -50,17 +43,26 @@ public class JSONUtils {
 
         // Création du répertoire "json" dans le stockage interne
         File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
+
         if (!directory.exists()) {
             directory.mkdir();
         }
 
+        File file = new File(directory, fileName);
+
         try {
             // Création du fichier JSON dans le répertoire "json"
-            File file = new File(directory, fileName);
-            if( !file.exists() ){
+            if( !file.exists()){
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(jsonData);
                 fileWriter.close();
+            } else {
+                String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
+                if(jsonString.equals("[]")){
+                    FileWriter fileWriter = new FileWriter(file);
+                    fileWriter.write(jsonData);
+                    fileWriter.close();
+                }
             }
 
         } catch (IOException e) {
@@ -96,112 +98,41 @@ public class JSONUtils {
         }
     }
 
-    public static void ajouterValeurJSON(Context context, String fileName, double latitude, double longitude, String titre, String desc) {
-
-        switch (fileName) {
-            case MARKERS_FILE:
-                try {
-                    // Récupération du fichier JSON existant depuis le stockage interne
-                    File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
-                    File file = new File(directory, MARKERS_FILE);
-
-                    // Chargement du fichier JSON
-                    String jsonString = loadJSONFromFile(file.getAbsolutePath());
-
-                    // Conversion de la chaîne JSON en un tableau JSON
-                    JSONArray jsonArray = new JSONArray(jsonString);
-
-                    // Création du nouvel objet JSON
-                    JSONObject nouvelObjet = new JSONObject();
-
-                    nouvelObjet.put("latitude", latitude);
-                    nouvelObjet.put("longitude", longitude);
-                    nouvelObjet.put("titre", titre);
-                    nouvelObjet.put("desc", desc);
-
-                    // Ajout du nouvel objet au tableau JSON existant
-                    jsonArray.put(nouvelObjet);
-
-                    // Enregistrement du tableau JSON mis à jour dans le fichier
-                    writeJSONToFile(file.getAbsolutePath(), jsonArray.toString());
-
-                    Log.d(TAG, "Fichier JSON modifié avec succès.");
-
-                } catch (JSONException e) {
-                    Log.e(TAG, "Erreur lors de l'ajout de la valeur JSON : " + e.getMessage());
-                    e.printStackTrace();
-                }
-                break;
-            case MESSAGES_FILE:
-                // TODO : Écriture/modification du fichier messages
-                break;
-            default:
-                break;
-        }
-    }
-
-    public static void saveJsonToFile(Context context, String jsonContent, String originalFileName) {
+    public static void initMessagesFile(Context context,String MacAdrr) {
         try {
-            // Obtention du répertoire de fichiers internes
-            File filesDir = context.getFilesDir();
+            // Création du tableau JSON
+            JSONArray jsonArray = new JSONArray();
 
-            // Création du nouveau nom de fichier
-            String newFileName = "new_" + originalFileName;
-            File newFile = new File(filesDir, newFileName);
+            // Création du premier objet
+            JSONObject userObject = new JSONObject();
+            userObject.put("name", "SlowChien");
+            userObject.put("receivedDate", getCurrentDateTime());
+            userObject.put("sentDate", getCurrentDateTime());
+            userObject.put("content", "Super ! Je suis sur Slowchien !");
+            userObject.put("macAddressSrc", MacAdrr);
+            userObject.put("macAddressDest", "AB:CD:EF:AB:CD:EF");
 
-            // Création du flux de sortie
-            OutputStream outputStream = new FileOutputStream(newFile);
+            // Création du deuxième objet
+            JSONObject slowChienObject = new JSONObject();
+            slowChienObject.put("name", "SlowChien");
+            slowChienObject.put("receivedDate", getCurrentDateTime());
+            slowChienObject.put("sentDate", getCurrentDateTime());
+            slowChienObject.put("content", "Bienvenue dans Slowchien !");
+            slowChienObject.put("macAddressSrc", "AB:CD:EF:AB:CD:EF");
+            slowChienObject.put("macAddressDest", MacAdrr);
 
-            // Conversion du JSON en tableau de bytes
-            byte[] jsonBytes = jsonContent.getBytes();
+            jsonArray.put(slowChienObject);
+            jsonArray.put(userObject);
 
-            // Écriture du contenu dans le fichier
-            outputStream.write(jsonBytes);
-            Toast.makeText(context, "Données envoyées avec succès !", Toast.LENGTH_SHORT).show();
-
-            // Fermeture du flux de sortie
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Gérer les exceptions ou afficher un message d'erreur
-        }
-    }
-
-    public static void créerChatJson(Context context) {
-        try {
-            String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
-            String filePath = jsonDirectoryPath + "/" + MESSAGES_FILE;
-            String outputFilePath = jsonDirectoryPath + "/" + CHAT_FILE;
-            System.out.println(MY_MAC_ADDRESS);
-            // Chargement JSON
-            String content = loadJSONFromFile(filePath);
-            System.out.println(content);
-            // Traitement JSON
-            JSONArray messages = new JSONArray(content);
-            JSONArray filteredMessages = new JSONArray();
-
-            for (int i = 0; i < messages.length(); i++) {
-                JSONObject message = messages.getJSONObject(i);
-                String srcAddress = message.optString("macAddressSrc", "");
-                String destAddress = message.optString("macAddressDest", "");
-
-                if (srcAddress.equals(MY_MAC_ADDRESS) || destAddress.equals(MY_MAC_ADDRESS)) {
-                    filteredMessages.put(message);
-                }
-            }
-
-
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath));
-            writer.write(filteredMessages.toString(4)); // Indentation de 4 espaces pour une meilleure lisibilité
-            writer.close();
-
-            Log.d(TAG, "Filtrage terminé. Le fichier chat.json a été créé avec succès.");
-        } catch (IOException | JSONException e) {
+            // Écriture du fichier JSON dans le stockage interne
+            String jsonString = jsonArray.toString();
+            JSONUtils.saveJsonFileToInternalStorage(context, MESSAGES_FILE, jsonString);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public static void createSentReceiveJson(Context context, String inputFileName, String outputFileName, String filterKey) {
+    public static void createSentReceiveJSON(Context context, String inputFileName, String outputFileName, String filterKey) {
         try {
             String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
             String inputFilePath = jsonDirectoryPath + "/" + inputFileName;
@@ -233,6 +164,95 @@ public class JSONUtils {
         }
     }
 
+    public static void createChatJSON(Context context) {
+        try {
+            String MY_MAC_ADDRESS=MainActivity.getMacAddr(context);
+            String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
+            String filePath = jsonDirectoryPath + "/" + MESSAGES_FILE;
+            String outputFilePath = jsonDirectoryPath + "/" + CHAT_FILE;
+            System.out.println(MainActivity.getMacAddr(context));
+            // Chargement JSON
+            String content = loadJSONFromFile(filePath);
+            System.out.println(content);
+            // Traitement JSON
+            JSONArray messages = new JSONArray(content);
+            JSONArray filteredMessages = new JSONArray();
+
+            for (int i = 0; i < messages.length(); i++) {
+                JSONObject message = messages.getJSONObject(i);
+                String srcAddress = message.optString("macAddressSrc", "");
+                String destAddress = message.optString("macAddressDest", "");
+
+                if (srcAddress.equals(MY_MAC_ADDRESS) || destAddress.equals(MY_MAC_ADDRESS)) {
+                    filteredMessages.put(message);
+                }
+            }
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath));
+            writer.write(filteredMessages.toString(4)); // Indentation de 4 espaces pour une meilleure lisibilité
+            writer.close();
+
+            Log.d(TAG, "Filtrage terminé. Le fichier chat.json a été créé avec succès.");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void initMarkersFile(Context context) {
+        try {
+            // Création de l'objet JSON
+            JSONArray jsonArray = new JSONArray();
+
+            JSONObject markObject = new JSONObject();
+            markObject.put("latitude", 48.858324);
+            markObject.put("longitude", 2.294549);
+            markObject.put("titre", "Boîte aux Lettres n°1");
+            markObject.put("desc", "PARIS - Tour Eiffel");
+
+
+            jsonArray.put(markObject);
+
+            String jsonString = jsonArray.toString();
+            // Enregistrement du tableau JSON mis à jour dans le fichier
+            JSONUtils.saveJsonFileToInternalStorage(context, MARKERS_FILE, jsonString);
+
+            Log.d(TAG, "Filtrage terminé. Le fichier markers.json a été créé avec succès.");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void initContactFile(Context context,String MacAdrr) {
+        try {
+            // Création de l'objet JSON
+            JSONArray jsonArray = new JSONArray();
+
+            // Création du premier objet
+            JSONObject userObject = new JSONObject();
+            userObject.put("name", "SlowChien");
+            userObject.put("macAddress", "AB:CD:EF:AB:CD:EF");
+            userObject.put("address", "???");
+            userObject.put("description", "Slowchien - L'appli sans réseau");
+
+            // Création du deuxième objet
+            JSONObject slowChienObject = new JSONObject();
+            slowChienObject.put("name", "User");
+            slowChienObject.put("macAddress", MacAdrr);
+            slowChienObject.put("address", "???");
+            slowChienObject.put("description", "Modifie ton profil");
+
+            jsonArray.put(slowChienObject);
+            jsonArray.put(userObject);
+
+            // Écriture du fichier JSON dans le stockage interne
+            String jsonString = jsonArray.toString();
+            JSONUtils.saveJsonFileToInternalStorage(context, CONTACTS_FILE, jsonString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void cleanJSONFile(Context context, String fileName) {
         try {
             String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
@@ -255,17 +275,15 @@ public class JSONUtils {
         cleanJSONFile(context, SENT_FILE);
         cleanJSONFile(context, RECEIVED_FILE);
         cleanJSONFile(context, CHAT_FILE);
-        cleanJSONFile(context, CONTACT_FILE);
-        initJSONFile2(context, MESSAGES_FILE,MY_MAC_ADDRESS);
-
-        créerChatJson(context);
-        createSentReceiveJson(context, MESSAGES_FILE, SENT_FILE, "macAddressSrc");
-        createSentReceiveJson(context, MESSAGES_FILE, RECEIVED_FILE, "macAddressDest");
+        cleanJSONFile(context, MARKERS_FILE);
+        initMessagesFile(context, MY_MAC_ADDRESS);
+        createSentReceiveJSON(context, MESSAGES_FILE, SENT_FILE, "macAddressSrc");
+        createSentReceiveJSON(context, MESSAGES_FILE, RECEIVED_FILE, "macAddressDest");
+        createChatJSON(context);
+        initMarkersFile(context);
     }
 
-
-
-    public static void updateChatJson(Context context) {
+    public static void updateChatJSON(Context context) {
         try {
             String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
             String messagesFilePath = jsonDirectoryPath + "/" + MESSAGES_FILE;
@@ -290,7 +308,7 @@ public class JSONUtils {
                 String srcAddress = message.optString("macAddressSrc", "");
 
                 // Vérifier si l'adresse source correspond à MY_MAC_ADDRESS
-                if (srcAddress.equals(MY_MAC_ADDRESS)) {
+                if (srcAddress.equals(MainActivity.getMacAddr(context))) {
                     // Vérifier si le message existe déjà dans le fichier chat.json
                     if (!containsMessage(filteredMessages, message)) {
                         filteredMessages.put(message);
@@ -318,11 +336,11 @@ public class JSONUtils {
         }
     }
 
-    public static void ajouterValeurJSONContact(Context context, String contactFile, String macAddress, String name, String address, String description) {
+    public static void updateContactsJSON(Context context, String macAddress, String name, String address, String description) {
         try {
             // Récupération du fichier JSON existant depuis le stockage interne
             File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
-            File file = new File(directory, CONTACT_FILE);
+            File file = new File(directory, CONTACTS_FILE);
 
             // Chargement du fichier JSON
             String jsonString = loadJSONFromFile(file.getAbsolutePath());
@@ -355,6 +373,43 @@ public class JSONUtils {
 
     }
 
+    public static void updateMarkersJSON(Context context, double latitude, double longitude, String titre, String desc) {
+        try {
+            // Récupération du fichier JSON existant depuis le stockage interne
+            File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
+            File file = new File(directory, MARKERS_FILE);
+
+            // Chargement du fichier JSON
+            String jsonString = loadJSONFromFile(file.getAbsolutePath());
+
+            // Conversion la chaîne JSON en un tableau JSON
+            JSONArray jsonArray = new JSONArray(jsonString);
+
+            // Création du nouvel objet JSON
+            JSONObject nouvelObjet = new JSONObject();
+
+            nouvelObjet.put("latitude", latitude);
+            nouvelObjet.put("longitude", longitude);
+            nouvelObjet.put("titre", titre);
+            nouvelObjet.put("desc", desc);
+
+            // Ajout du nouvel objet au tableau JSON existant
+            jsonArray.put(nouvelObjet);
+
+            // Enregistrement du tableau JSON mis à jour dans le fichier
+            writeJSONToFile(file.getAbsolutePath(), jsonArray.toString());
+
+            Log.d(TAG, "Fichier JSON markers modifié avec succès.");
+
+        } catch (JSONException e) {
+
+            Log.e(TAG, "Erreur lors de l'ajout de la valeur JSON : " + e.getMessage());
+            e.printStackTrace();
+        }
+
+
+    }
+
 
     private static boolean containsMessage(JSONArray jsonArray, JSONObject message) {
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -365,60 +420,14 @@ public class JSONUtils {
         }
         return false;
     }
-    public static void initJSONFile2(Context context, String file,String MacAdrr) {
-        try {
-
-
-            // Récupération du fichier JSON existant depuis le stockage interne
-            File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
-            File file2 = new File(directory, MESSAGES_FILE);
-
-            // Chargement du fichier JSON
-            String jsonString = loadJSONFromFile(file2.getAbsolutePath());
-
-            // Conversion la chaîne JSON en un tableau JSON
-            JSONArray jsonArray = new JSONArray(jsonString);
-
-            JSONObject userObject = new JSONObject();
-            userObject.put("name", "SlowChien");
-            userObject.put("receivedDate", getCurrentDateTime());
-            userObject.put("sentDate", getCurrentDateTime());
-            userObject.put("content", "Super ! Je suis sur Slowchien !");
-            userObject.put("macAddressSrc", MacAdrr);
-            userObject.put("macAddressDest", "AB:CD:EF:AB:CD:EF");
-
-            // Création du deuxième objet
-            JSONObject slowChienObject = new JSONObject();
-            slowChienObject.put("name", "SlowChien");
-            slowChienObject.put("receivedDate", getCurrentDateTime());
-            slowChienObject.put("sentDate", getCurrentDateTime());
-            slowChienObject.put("content", "Bienvenue dans Slowchien !");
-            slowChienObject.put("macAddressSrc", "AB:CD:EF:AB:CD:EF");
-            slowChienObject.put("macAddressDest", MacAdrr);
-
-            jsonArray.put(slowChienObject);
-            jsonArray.put(userObject);
-
-            // Enregistrement du tableau JSON mis à jour dans le fichier
-            writeJSONToFile(file2.getAbsolutePath(), jsonArray.toString());
-
-            Log.d(TAG, "Fichier JSON contact modifié avec succès.");
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void sortMessagesByNewestDate(List<Message> messageList, String pageName) {
-        Collections.sort(messageList, new Comparator<Message>() {
-            @Override
-            public int compare(Message message1, Message message2) {
-                if (pageName == "Sent") {
-                    return message2.getSentDate().compareTo(message1.getSentDate());
-                }
-                else {
-                    return message2.getReceivedDate().compareTo(message1.getReceivedDate());
-                }
+        Collections.sort(messageList, (message1, message2) -> {
+            if (pageName.equals("Sent")) {
+                return message2.getSentDate().compareTo(message1.getSentDate());
+            }
+            else {
+                return message2.getReceivedDate().compareTo(message1.getReceivedDate());
             }
         });
     }

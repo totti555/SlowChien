@@ -201,10 +201,7 @@ public class BluetoothService {
         mConnectThread.start();
     }
 
-    /**
-     ConnectedThread, which is responsible for maintaining the BTConnection, Sending the data, and
-     receiving incoming data through input/output streams respectively.
-     **/
+
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
@@ -282,12 +279,6 @@ public class BluetoothService {
         mConnectedThread.start();
     }
 
-    /**
-     * Write to the ConnectedThread in an unsynchronized manner
-     *
-     * @param out The bytes to write
-     * @see ConnectedThread#write(byte[])
-     */
     public void write(byte[] out) {
         // Create temporary object
         ConnectedThread r;

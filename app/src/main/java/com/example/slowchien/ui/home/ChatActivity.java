@@ -41,7 +41,6 @@ import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
 
-    String myMacAddress = MainActivity.getMacAddr();
     private EditText messageEditText;
     private ImageButton sendButton;
     private String selectedName;
@@ -73,7 +72,7 @@ public class ChatActivity extends AppCompatActivity {
         try {
             File directory = new File(this.getFilesDir(), JSON_DIRECTORY);
             File file = new File(directory, CHAT_FILE);
-            JSONUtils.créerChatJson(getApplicationContext());
+            JSONUtils.createChatJSON(getApplicationContext());
             String jsonString = JSONUtils.loadJSONFromFile(file.getAbsolutePath());
 
             // Conversion de la chaîne JSON en un tableau JSON
@@ -123,7 +122,7 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String messageContent = messageEditText.getText().toString();
                 try {
-                    sendMessage(messageContent, messageFilePath);
+                    sendMessage(messageContent, messageFilePath,getApplicationContext());
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
@@ -179,7 +178,7 @@ public class ChatActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    private void sendMessage(String messageContent, String filePath) throws IOException, JSONException {
+    private void sendMessage(String messageContent, String filePath,Context context) throws IOException, JSONException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         String formattedDate = dateFormat.format(new Date());
 
@@ -189,7 +188,7 @@ public class ChatActivity extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Message newMessage = new Message(selectedName, currentDate, currentDate, messageContent, myMacAddress, selectedMacAddress);
+        Message newMessage = new Message(selectedName, currentDate, currentDate, messageContent, MainActivity.getMacAddr(context), selectedMacAddress);
 
         JSONArray jsonArray = loadJSONArrayFromFile(filePath);
         JSONObject messageObject = new JSONObject();
@@ -213,7 +212,7 @@ public class ChatActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
 
-        JSONUtils.updateChatJson(getApplicationContext());
+        JSONUtils.updateChatJSON(getApplicationContext());
 
         // Recharge la page
         recreate();
