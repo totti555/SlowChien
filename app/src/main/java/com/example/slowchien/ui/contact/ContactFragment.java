@@ -35,7 +35,7 @@ public class ContactFragment extends Fragment {
     private static final String CONTACTS_FILE = "contacts.json";
 
     private Handler mHandler;
-    private static final long REFRESH_INTERVAL = 5000; // 5 secondes
+    private static final long REFRESH_INTERVAL = 2000; // 5 secondes
 
     private ContactAdapter contactAdapter;
     private  ListView mListView;

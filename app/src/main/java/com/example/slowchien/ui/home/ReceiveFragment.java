@@ -31,7 +31,7 @@ public class ReceiveFragment extends Fragment {
     private static final String MESSAGE_FILE="messages.json";
 
     private Handler mHandler;
-    private static final long REFRESH_INTERVAL = 5000; // 5 secondes
+    private static final long REFRESH_INTERVAL = 2000; // 5 secondes
     private int lastVisibleItemPosition = 0;
 
     private List<Message> messageList;
