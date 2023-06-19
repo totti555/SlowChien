@@ -11,10 +11,12 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:fontFamily">@font/comfortaa_bold</item>
 
         <!-- Customize your theme here. -->
     </style>
     <style name="RoundDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowBackground">@drawable/radius_border</item>
+        <item name="android:fontFamily">@font/comfortaa_bold</item>
     </style>
 </resources>

@@ -205,7 +205,7 @@ public class JSONUtils {
             JSONObject markObject = new JSONObject();
             markObject.put("latitude", 48.858324);
             markObject.put("longitude", 2.294549);
-            markObject.put("titre", "Boîte au lettres n°1");
+            markObject.put("titre", "Boîte aux Lettres n°1");
             markObject.put("desc", "PARIS - Tour Eiffel");
 
             jsonArray.put(markObject);
