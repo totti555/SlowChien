@@ -168,7 +168,6 @@ public class LocationFragment extends Fragment {
         builder.setNegativeButton("Annuler", (dialog, which) -> dialog.cancel());
 
         builder.show();
-
     }
 
     private TextInputLayout createTextInputLayout(String label, String placeholder) {
