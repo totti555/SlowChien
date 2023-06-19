@@ -153,11 +153,11 @@ public class ChatFragment extends Fragment {
             filteredList = filterMessages(getContext(),jsonArray);
             for (JSONObject jsonObject : filteredList) {
                 String name = jsonObject.getString("name");
-                String macAddressSrc = jsonObject.getString("macAddressSrc");
-                String content = getLatestMessageContent(jsonString,macAddressSrc, "content");
-                String receivedDateStr = getLatestMessageContent(jsonString,macAddressSrc, "receivedDate");
-                String sentDateStr = getLatestMessageContent(jsonString,macAddressSrc, "sentDate");
                 String macAddressDest = jsonObject.getString("macAddressDest");
+                String macAddressSrc = jsonObject.getString("macAddressSrc");
+                String content = getLatestMessageContent(jsonString,macAddressDest, "content");
+                String receivedDateStr = getLatestMessageContent(jsonString,macAddressDest, "receivedDate");
+                String sentDateStr = getLatestMessageContent(jsonString,macAddressDest, "sentDate");
 
 
                 SimpleDateFormat inputFormat;
