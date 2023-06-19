@@ -3,9 +3,13 @@ package com.example.slowchien.ui.location;
 import static com.example.slowchien.MainActivity.getCurrentDateTime;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
 import com.example.slowchien.MainActivity;
+import com.example.slowchien.ui.contact.Contact;
 import com.example.slowchien.ui.home.Message;
 
 import org.json.JSONArray;
@@ -20,6 +24,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 
@@ -283,6 +297,85 @@ public class JSONUtils {
         initMarkersFile(context);
     }
 
+    public static void initContactFile(Context context, String file,String MacAdrr) {
+        try {
+            // Création de l'objet JSON
+            File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
+            String filePath = directory + "/" + file;
+
+            JSONArray jsonArray = new JSONArray();
+
+            // Création du premier objet
+            JSONObject userObject = new JSONObject();
+            userObject.put("name", "SlowChien");
+            userObject.put("macAddress", "AB:CD:EF:AB:CD:EF");
+            userObject.put("address", "???");
+            userObject.put("description", "Slowchien - L'appli sans réseau");
+
+            // Création du deuxième objet
+            JSONObject slowChienObject = new JSONObject();
+            slowChienObject.put("name", "User");
+            slowChienObject.put("macAddress", MacAdrr);
+            slowChienObject.put("address", "???");
+            slowChienObject.put("description", "Modifie ton profil");
+
+            jsonArray.put(slowChienObject);
+            jsonArray.put(userObject);
+
+            // Écriture du fichier JSON dans le stockage interne
+            String jsonString = jsonArray.toString();
+            JSONUtils.saveJsonFileToInternalStorage(context, file, jsonString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public static void fusionFichierEchange(Context context, List<Message> messagesToFusion) {
+        try {
+            String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
+            String messagesFilePath = jsonDirectoryPath + "/" + MESSAGES_FILE;
+
+            // Charger les messages existants depuis messages.json
+            String messagesContent = loadJSONFromFile(messagesFilePath);
+            JSONArray jsonMessages = new JSONArray(messagesContent);
+
+            //List<Message> localMessages= new ArrayList<>();
+            Message currentMessage = null;
+            String formatPattern = "yyyy-MM-dd";
+            DateFormat dateFormat = new SimpleDateFormat(formatPattern);
+
+            //boucle de fusion
+            for (int i = 0; i < jsonMessages.length(); i++) {
+                JSONObject message = jsonMessages.getJSONObject(i);
+                currentMessage = new Message(
+                        message.optString("content", ""),
+                        dateFormat.parse(message.optString("receivedDate", "")),
+                        dateFormat.parse(message.optString("sentDate", "")),
+                        message.optString("name", ""),
+                        message.optString("macAddressSrc", ""),
+                        message.optString("macAddressDest", "")
+                );
+                messagesToFusion.add(currentMessage);
+            }
+            // avant d'aller plus loin, il faut tester la fonctionnalité de fusion (surtout les dates)
+            //trier par date d'envoie
+            //suppression des doublons (
+
+            Log.d(TAG, "Fichier JSON messages fusionné avec succès.");
+
+        } catch (JSONException e) {
+
+            Log.e(TAG, "Erreur lors de la fusion des messages : " + e.getMessage());
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     public static void updateChatJSON(Context context) {
         try {
             String jsonDirectoryPath = context.getFilesDir().getAbsolutePath() + "/" + JSON_DIRECTORY;
@@ -406,8 +499,44 @@ public class JSONUtils {
             Log.e(TAG, "Erreur lors de l'ajout de la valeur JSON : " + e.getMessage());
             e.printStackTrace();
         }
+    }
 
+    public static void deleteOneContact(Context context, Contact contactToDelete) {
+        try {
+            // Récupération du fichier JSON existant depuis le stockage interne
+            File directory = new File(context.getFilesDir(), JSON_DIRECTORY);
+            File file = new File(directory, CONTACTS_FILE);
 
+            // Chargement du fichier JSON
+            String jsonString = loadJSONFromFile(file.getAbsolutePath());
+
+            // Conversion la chaîne JSON en un tableau JSON
+            JSONArray jsonArray = new JSONArray(jsonString);
+
+            int i=0;
+            boolean flag = false;
+            JSONObject currentContact = null;
+
+            //recherche du contact
+            while ( (!flag) && (i < jsonArray.length()) ) {
+                currentContact = jsonArray.getJSONObject(i);
+                    //on compare les macAddress
+                    if (currentContact.optString("macAddress", "").equals(contactToDelete.getMacAddress())){
+                        flag = true;
+                        jsonArray.remove(i);
+                    };
+                i++;
+            }
+            // Enregistrement du tableau JSON mis à jour dans le fichier
+            writeJSONToFile(file.getAbsolutePath(), jsonArray.toString());
+
+            Log.d(TAG, "Fichier JSON contact modifié avec succès.");
+
+        } catch (JSONException e) {
+
+            Log.e(TAG, "Erreur lors de la suppression de la valeur JSON : " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 
@@ -422,12 +551,15 @@ public class JSONUtils {
     }
 
     public static void sortMessagesByNewestDate(List<Message> messageList, String pageName) {
-        Collections.sort(messageList, (message1, message2) -> {
-            if (pageName.equals("Sent")) {
-                return message2.getSentDate().compareTo(message1.getSentDate());
-            }
-            else {
-                return message2.getReceivedDate().compareTo(message1.getReceivedDate());
+        Collections.sort(messageList, new Comparator<Message>() {
+            @Override
+            public int compare(Message message1, Message message2) {
+                if (pageName == "Sent" || pageName == "Messages") {
+                    return message2.getSentDate().compareTo(message1.getSentDate());
+                }
+                else {
+                    return message2.getReceivedDate().compareTo(message1.getReceivedDate());
+                }
             }
         });
     }
