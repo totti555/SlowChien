@@ -1,6 +1,12 @@
 package com.example.slowchien;
 
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.View;
+
 
 import com.example.slowchien.ui.location.JSONUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -55,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
         JSONUtils.initContactFile(getApplicationContext(),getMacAddr());
     }
 
-    public static String getMacAddr() {
-        if (!MAC_ADDRESS.equals("AA:AA:AA:AA:AA:AA")){
-            return MAC_ADDRESS;
+    public static String getMacAddr(Context context) {
+        if (getMacAddressSaved(context)!="AA:AA:AA:AA:AA:AA"){
+            return getMacAddressSaved(context);
         }
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
@@ -66,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
                 byte[] macBytes = nif.getHardwareAddress();
                 if (macBytes == null) {
+                    saveMacAddress(context,"AA:AA:AA:AA:AA:AA");
                     return "AA:AA:AA:AA:AA:AA";
                 }
 
@@ -77,16 +84,27 @@ public class MainActivity extends AppCompatActivity {
                 if (res1.length() > 0) {
                     res1.deleteCharAt(res1.length() - 1);
                 }
+                saveMacAddress(context,res1.toString());
                 return res1.toString();
             }
         } catch (Exception ignored) {
         }
+        saveMacAddress(context,"AA:AA:AA:AA:AA:AA");
         return "AA:AA:AA:AA:AA:AA";
     }
 
-    public static String getCurrentDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        Date now = new Date();
-        return dateFormat.format(now);
+    public static void saveMacAddress(Context context, String macAddress) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("MAC_ADDRESS", macAddress);
+        editor.apply();
     }
-}
+
+
+    public static String getMacAddressSaved(Context context) {
+        // Obtention de l'objet SharedPreferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        // Récupération de la valeur de MAC_ADDRESS
+        return sharedPreferences.getString("MAC_ADDRESS", "AA:AA:AA:AA:AA:AA");
+    }
