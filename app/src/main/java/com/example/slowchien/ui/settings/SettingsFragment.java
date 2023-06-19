@@ -64,7 +64,7 @@ public class SettingsFragment extends Fragment {
 
     // Fonction pour générer la popup de confirmation
     private void showConfirmationPopup(View anchorView) {
-        Dialog dialog = new Dialog(requireContext(), R.style.RoundDialog);
+        Dialog dialog = new Dialog(requireContext(), R.style.RoundDialogWithPadding);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         int width = getResources().getDisplayMetrics().widthPixels;
@@ -79,6 +79,8 @@ public class SettingsFragment extends Fragment {
             window.setAttributes(params);
             window.setGravity(Gravity.CENTER); // Aligner le dialogue au centre
         }
+
+
 
         LinearLayout dialogLayout = new LinearLayout(requireContext());
         dialogLayout.setOrientation(LinearLayout.VERTICAL);
@@ -180,7 +182,7 @@ public class SettingsFragment extends Fragment {
         dialog.setContentView(dialogLayout);
 
         EditText macAddressEditText = new EditText(requireContext());
-        macAddressEditText.setText("AA:AA:AA:AA:AA:AA"); // Valeur par défaut
+        macAddressEditText.setText(MainActivity.getMacAddr(getContext())); // Valeur par défaut
         macAddressEditText.setHint("Adresse MAC");
         dialogLayout.addView(macAddressEditText);
 
