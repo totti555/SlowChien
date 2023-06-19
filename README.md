@@ -40,5 +40,5 @@ Les contributions à l'amélioration de SlowChien sont les bienvenues ! Si vous 
 
 ## Licence
 
-Ce projet est sous licence XXX. Veuillez consulter le fichier [LICENSE]([XXX](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)) pour plus de détails.
+Ce projet est sous licence GPL3. Veuillez consulter le fichier [LICENSE]([XXX](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)) pour plus de détails.
 
