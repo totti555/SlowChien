@@ -81,7 +81,7 @@ public class ExchangeFragment extends Fragment {
     private static final String NAME = "SlowChien";
     private static final String TAG = "BluetoothService";
     private static final UUID MY_UUID =
-            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+            UUID.fromString("a6d1e32d-f043-4a0b-95dd-a5c26ba916c3");
 
     private Handler mHandler;
 
@@ -738,6 +738,7 @@ public class ExchangeFragment extends Fragment {
             try {
                 // Création d'un serveur BluetoothServerSocket
                 tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID);
+                Log.d("Socket", "Création server socket : " + MY_UUID);
             } catch (IOException e) {
                 Log.e(TAG, "Erreur lors de la création du BluetoothServerSocket", e);
             }

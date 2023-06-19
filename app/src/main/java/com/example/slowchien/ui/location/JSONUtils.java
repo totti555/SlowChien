@@ -149,7 +149,7 @@ public class JSONUtils {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String value = jsonObject.optString(filterKey, "");
 
-                if (value.equals(MY_MAC_ADDRESS)) {
+                if (value.equals(MainActivity.getMacAddr(context))) {
                     filteredArray.put(jsonObject);
                 }
             }
@@ -276,7 +276,7 @@ public class JSONUtils {
         cleanJSONFile(context, RECEIVED_FILE);
         cleanJSONFile(context, CHAT_FILE);
         cleanJSONFile(context, MARKERS_FILE);
-        initMessagesFile(context, MY_MAC_ADDRESS);
+        initMessagesFile(context, MainActivity.getMacAddr(context));
         createSentReceiveJSON(context, MESSAGES_FILE, SENT_FILE, "macAddressSrc");
         createSentReceiveJSON(context, MESSAGES_FILE, RECEIVED_FILE, "macAddressDest");
         createChatJSON(context);
