@@ -50,7 +50,7 @@ public class SettingsFragment extends Fragment {
 
         final TextView textViewMACAddress = binding.textSettings;
         TextView textMacAdress=root.findViewById(R.id.text_settings);
-        textMacAdress.setText("Adresse MAC :"+ MainActivity.getMacAddr(getContext()));
+        textMacAdress.setText("Adresse MAC :\n"+ MainActivity.getMacAddr(getContext()));
         settingsViewModel.getMACAddressText() .observe(getViewLifecycleOwner(), textViewMACAddress::setText);
 
         // Ajout d'un écouteur sur le bouton de scan
@@ -121,7 +121,7 @@ public class SettingsFragment extends Fragment {
 
     // Fonction pour générer la popup de résultat
     private void showResultPopup(View anchorView, boolean success) {
-        Dialog dialog = new Dialog(requireContext(), R.style.RoundDialog);
+        Dialog dialog = new Dialog(requireContext(), R.style.RoundDialogWithPadding);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         int width = getResources().getDisplayMetrics().widthPixels;
@@ -162,7 +162,7 @@ public class SettingsFragment extends Fragment {
     }
 
     public void changeMacAddress(View anchorView,TextView textMacAdress) {
-        Dialog dialog = new Dialog(requireContext(), R.style.RoundDialog);
+        Dialog dialog = new Dialog(requireContext(), R.style.RoundDialogWithPadding);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         int width = getResources().getDisplayMetrics().widthPixels;
@@ -195,7 +195,7 @@ public class SettingsFragment extends Fragment {
             String macAddress = macAddressEditText.getText().toString();
             // Faites quelque chose avec l'adresse MAC saisie
             MainActivity.saveMacAddress(getContext(),macAddress);
-            textMacAdress.setText("Adresse MAC :"+ MainActivity.getMacAddr(getContext()));
+            textMacAdress.setText("Adresse MAC :\n"+ MainActivity.getMacAddr(getContext()));
             dialog.dismiss();
         });
         buttonLayout.addView(validateButton);

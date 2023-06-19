@@ -36,7 +36,7 @@ public class ChatFragment extends Fragment {
     private static final String CHAT_FILE = "chat.json";
 
     private Handler mHandler;
-    private static final long REFRESH_INTERVAL = 5000; // 5 secondes
+    private static final long REFRESH_INTERVAL = 2000; // 5 secondes
     private int lastVisibleItemPosition = 0;
 
     private MessageAdapter adapter;
@@ -64,6 +64,8 @@ public class ChatFragment extends Fragment {
 
         return new ArrayList<>(latestMessages.values());
     }
+
+    /*
 
     public static String getLatestMessageContent(String messagesJson, String macAddressSrc, String stringParam) {
         try {
@@ -130,6 +132,74 @@ public class ChatFragment extends Fragment {
         return null;
     }
 
+     */
+
+    public static String getLatestMessageContent(String messagesJson, String macAddressSrc, String stringParam) {
+        try {
+            JSONArray messagesArray = new JSONArray(messagesJson);
+            List<JSONObject> filteredMessages = new ArrayList<>();
+
+            for (int i = 0; i < messagesArray.length(); i++) {
+                JSONObject message = messagesArray.getJSONObject(i);
+                String srcAddress = message.getString("macAddressSrc");
+                String destAddress = message.getString("macAddressDest");
+
+                if (srcAddress.equals(macAddressSrc) || destAddress.equals(macAddressSrc)) {
+                    filteredMessages.add(message);
+                }
+            }
+
+            if (filteredMessages.size() > 0) {
+                // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat dateFormat;
+                String dateStr = filteredMessages.get(0).getString("sentDate");
+
+                if (dateStr.contains("GMT") ) {
+                    dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.ENGLISH);
+                } else if (dateStr.contains(":")) {
+                    dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                } else {
+                    dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                }
+
+
+                Date latestDate = dateFormat.parse(dateStr);
+
+                JSONObject latestMessage = filteredMessages.get(filteredMessages.size() - 1);
+
+                for (int i = 1; i < filteredMessages.size(); i++) {
+                    String currentDatesStr = filteredMessages.get(i).getString("sentDate");
+                    if (currentDatesStr.contains("GMT") ) {
+                        dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT' yyyy", Locale.ENGLISH);
+                    } else if (currentDatesStr.contains(":")) {
+                        dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                    } else {
+                        dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    }
+                    Date currentDate = dateFormat.parse(currentDatesStr);
+
+                    if (currentDate.after(latestDate)) {
+                        latestDate = currentDate;
+                        latestMessage = filteredMessages.get(i);
+                    }
+                }
+                if (Objects.equals(stringParam, "content")) {
+                    return latestMessage.getString("content");
+                }
+                else if (Objects.equals(stringParam, "sentDate")) {
+                    return latestMessage.getString("sentDate");
+                }
+                else {
+                    return latestMessage.getString("receivedDate");
+                }
+            }
+        } catch (JSONException | ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     private static boolean isSentDateNewer(String date1, String date2) {
         if (date1 == null) {
             return false;
@@ -155,9 +225,12 @@ public class ChatFragment extends Fragment {
                 String name = jsonObject.getString("name");
                 String macAddressDest = jsonObject.getString("macAddressDest");
                 String macAddressSrc = jsonObject.getString("macAddressSrc");
-                String content = getLatestMessageContent(jsonString,macAddressDest, "content");
-                String receivedDateStr = getLatestMessageContent(jsonString,macAddressDest, "receivedDate");
-                String sentDateStr = getLatestMessageContent(jsonString,macAddressDest, "sentDate");
+                String selectedMacAddress = MainActivity.getMacAddr(getContext()).equals(jsonObject.getString("macAddressSrc"))
+                        ? jsonObject.getString("macAddressDest")
+                        : jsonObject.getString("macAddressSrc");
+                String content = getLatestMessageContent(jsonString,selectedMacAddress, "content");
+                String receivedDateStr = getLatestMessageContent(jsonString,selectedMacAddress, "receivedDate");
+                String sentDateStr = getLatestMessageContent(jsonString,selectedMacAddress, "sentDate");
 
 
                 SimpleDateFormat inputFormat;
