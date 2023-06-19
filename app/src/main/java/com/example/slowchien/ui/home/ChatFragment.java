@@ -72,6 +72,7 @@ public class ChatFragment extends Fragment {
             JSONArray messagesArray = new JSONArray(messagesJson);
             List<JSONObject> filteredMessages = new ArrayList<>();
 
+
             for (int i = 0; i < messagesArray.length(); i++) {
                 JSONObject message = messagesArray.getJSONObject(i);
                 String srcAddress = message.getString("macAddressSrc");
